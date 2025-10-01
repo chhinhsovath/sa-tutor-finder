@@ -124,6 +124,21 @@ class ApiService {
     }
   }
 
+  // Get current mentor profile
+  Future<Mentor> getMyProfile() async {
+    try {
+      final options = await _getAuthOptions();
+      final response = await _dio.get(
+        ApiConfig.mentorMe,
+        options: options,
+      );
+
+      return Mentor.fromJson(response.data['mentor']);
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
   // Update own profile
   Future<Mentor> updateProfile({
     String? name,
@@ -145,7 +160,7 @@ class ApiService {
         options: options,
       );
 
-      return Mentor.fromJson(response.data);
+      return Mentor.fromJson(response.data['mentor']);
     } on DioException catch (e) {
       throw _handleError(e);
     }

@@ -72,6 +72,34 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
+  // Check for existing session on app start
+  Future<bool> restoreSession() async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final token = await _apiService.getToken();
+      if (token == null) {
+        _isLoading = false;
+        notifyListeners();
+        return false;
+      }
+
+      // Fetch current user profile using stored token
+      _currentMentor = await _apiService.getMyProfile();
+      _isLoading = false;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      // Token is invalid or expired, clear it
+      await _apiService.clearToken();
+      _currentMentor = null;
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
   Future<void> logout() async {
     await _apiService.logout();
     _currentMentor = null;
