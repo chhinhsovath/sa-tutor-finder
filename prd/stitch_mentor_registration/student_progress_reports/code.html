@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Student Progress Reports</title>
+<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1193d4",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101c22",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="flex flex-col h-screen justify-between">
+<div class="flex-grow overflow-y-auto">
+<header class="sticky top-0 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm z-10">
+<div class="flex items-center p-4 border-b border-background-light-dark/10 dark:border-background-dark-light/10">
+<button class="text-gray-800 dark:text-gray-200">
+<span class="material-symbols-outlined">arrow_back_ios_new</span>
+</button>
+<h1 class="text-lg font-bold text-gray-900 dark:text-white flex-1 text-center">Student Reports</h1>
+<div class="w-8"></div>
+</div>
+</header>
+<main class="p-4">
+<h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Students</h2>
+<div class="space-y-2">
+<div class="flex items-center gap-4 p-3 rounded-lg bg-white dark:bg-gray-800/20 hover:bg-primary/10 dark:hover:bg-primary/20 cursor-pointer transition-colors duration-200">
+<img alt="Ethan Harper" class="h-14 w-14 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2fSSTguX-qG9sfiFUjEZX4leim9Wd1cbFrLiPN9N_jlMBNIhfOOmKFX5ajBtksLHY1Lm2UvjMMLeHR6ZntqoyBtkfZ6smpWEIWe61iBqlfsElYJUJsXLSdxU8IyBGhRYC8LfQEQ0ytntLwdw0omK5KV6VpSFin_kwvms0g1DCQ4P6lio73BmpdoVIoxw-IXMITqZ155eTiH92Wf6DzVD3nKKO_oAJIatMeXTgN0u-Ezq-d4_5aT9a-e0TpBQZW7j6BcEDTNBM0Xsj"/>
+<div class="flex-grow">
+<p class="text-base font-medium text-gray-900 dark:text-white">Ethan Harper</p>
+<p class="text-sm text-gray-600 dark:text-gray-400">12th Grade</p>
+</div>
+<span class="material-symbols-outlined text-gray-400 dark:text-gray-500">chevron_right</span>
+</div>
+<div class="flex items-center gap-4 p-3 rounded-lg bg-primary/10 dark:bg-primary/20 ring-2 ring-primary">
+<img alt="Olivia Bennett" class="h-14 w-14 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_JpKNw_J-PbkuMavONFPbtqfSNtcCWJtNg9c0b6JQKt-5FM5uy-qFq9r7aUNTYj0JEaUgpTNiqejo3DEfxxbifuVc0doP8PWrx_5FQI5D809paO6WGIL-x45D_RJIcpQ2c8bc0eP0b-l9PrQ51g674Sef5yFa0nHtQebBCGciO3WWsnSzjRUCV5VAVfBKcrk0WFqddWH5CMB4b6MPjvRJHAfgX5Q8b0zlboepxqWMJb4DF-KBxEm9rx-K8xpdrdEi1OpiwLAPauMR"/>
+<div class="flex-grow">
+<p class="text-base font-medium text-gray-900 dark:text-white">Olivia Bennett</p>
+<p class="text-sm text-gray-600 dark:text-gray-400">11th Grade</p>
+</div>
+<span class="material-symbols-outlined text-primary">chevron_right</span>
+</div>
+<div class="flex items-center gap-4 p-3 rounded-lg bg-white dark:bg-gray-800/20 hover:bg-primary/10 dark:hover:bg-primary/20 cursor-pointer transition-colors duration-200">
+<img alt="Noah Carter" class="h-14 w-14 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVZcsBUdKARClDeAaNURUPiwmZkWCFUT94IBR6K9oOl1hg7wRFwYXD5I0NZxELajBIrmhglcnSf-9WjZPbB3pZnEoUhBrAUnUDp5_fQfRD4MZYDFp4LhTgPTH0SkLxAcAYAwf_X2hX6tAIdAJtfFPNsK7fKIxW6KFUZ13tWMP4XBR68uceaf_6qet9H0YVzOq_FMLBjtoGqEQWI-bUwMZ01C2OYPn5UEm2pW0ZgCdxgY17Ac3K6E2tXMRnN5B0oUEvs3gq0-QJQWgW"/>
+<div class="flex-grow">
+<p class="text-base font-medium text-gray-900 dark:text-white">Noah Carter</p>
+<p class="text-sm text-gray-600 dark:text-gray-400">12th Grade</p>
+</div>
+<span class="material-symbols-outlined text-gray-400 dark:text-gray-500">chevron_right</span>
+</div>
+<div class="flex items-center gap-4 p-3 rounded-lg bg-white dark:bg-gray-800/20 hover:bg-primary/10 dark:hover:bg-primary/20 cursor-pointer transition-colors duration-200">
+<img alt="Ava Mitchell" class="h-14 w-14 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCxCo9B20uh9Bc5xIHU9B-0hqSn5HFupn6gsrPK6BQQTXbST1F5290NLjPX-iQeExNTWPNiDMOs22r7EuKMvJLzR6tofmQsYpp8mmzOCYaXeh0VzRvWrqAtWcWSdb2rHL_rXfO5UrRg3ONc-xVM2KCg519RTVBqEA7txSCur-8zSmalzrO5yG_mpMHfV7QfVyW_w0j__z81imUkXJ4x2fXlGDRb6U0QVUv98eZs2p62pAznOGpI5k8uda_QpixOc6VIR1FocTxfGp_x"/>
+<div class="flex-grow">
+<p class="text-base font-medium text-gray-900 dark:text-white">Ava Mitchell</p>
+<p class="text-sm text-gray-600 dark:text-gray-400">11th Grade</p>
+</div>
+<span class="material-symbols-outlined text-gray-400 dark:text-gray-500">chevron_right</span>
+</div>
+<div class="flex items-center gap-4 p-3 rounded-lg bg-white dark:bg-gray-800/20 hover:bg-primary/10 dark:hover:bg-primary/20 cursor-pointer transition-colors duration-200">
+<img alt="Liam Foster" class="h-14 w-14 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD1WF-I4Kdm4JGr1uERM0zasMsFq3BWOMFwnSW3pmQsOIcnJl0NJ90ZpDuCHiCAXafwv4plAJqrzreS2tuR7nl0T6N-NicTv77Riyi5gracd1pQNo1ST3i4KostbcmRh2gFvsunlVmIXv3PtAHqAb2pu-_uVeYH153lcvDoSyjDpwEHjAv7RELbVj9ClyGoQKj93aEx-VjE_HZT91GOYzSJgORZgQF4PQBiOPhnLNiB4Exqx_EFvTAdrVTUB4sOcoO-CPnCHPXcUxOE"/>
+<div class="flex-grow">
+<p class="text-base font-medium text-gray-900 dark:text-white">Liam Foster</p>
+<p class="text-sm text-gray-600 dark:text-gray-400">12th Grade</p>
+</div>
+<span class="material-symbols-outlined text-gray-400 dark:text-gray-500">chevron_right</span>
+</div>
+</div>
+</main>
+</div>
+<footer class="bg-background-light dark:bg-background-dark border-t border-gray-200 dark:border-gray-800">
+<nav class="flex justify-around p-2">
+<a class="flex flex-col items-center gap-1 text-gray-600 dark:text-gray-400 w-full py-1" href="#">
+<span class="material-symbols-outlined">groups</span>
+<span class="text-xs font-medium">Students</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-primary w-full py-1 rounded-full bg-primary/10 dark:bg-primary/20" href="#">
+<span class="material-symbols-outlined">bar_chart</span>
+<span class="text-xs font-medium">Reports</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-gray-600 dark:text-gray-400 w-full py-1" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="text-xs font-medium">Profile</span>
+</a>
+</nav>
+<div class="h-5 bg-background-light dark:bg-background-dark"></div>
+</footer>
+</div>
+
+</body></html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+<link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B700%3B900&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900" onload="this.rel='stylesheet'" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<title>Stitch Design</title>
+<link href="data:image/x-icon;base64," rel="icon" type="image/x-icon"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#1193d4",
+              "background-light": "#f6f7f8",
+              "background-dark": "#101c22",
+            },
+            fontFamily: {
+              display: ["Inter"],
+            },
+            borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
+          },
+        },
+      };
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body>
+<div class="font-display flex h-auto min-h-screen w-full flex-col justify-between bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-200">
+<div class="w-full">
+<header class="flex items-center justify-between p-4 bg-background-light dark:bg-background-dark">
+<button class="flex h-10 w-10 items-center justify-center rounded-full text-slate-800 dark:text-slate-200">
+<span class="material-symbols-outlined"> menu </span>
+</button>
+<h1 class="text-xl font-bold">Dashboard</h1>
+<div class="h-10 w-10"></div>
+</header>
+<main class="p-4">
+<section>
+<h2 class="text-[22px] font-bold leading-tight mb-4">My Students</h2>
+<div class="flex overflow-x-auto [-ms-scrollbar-style:none] [scrollbar-width:none] [&amp;::-webkit-scrollbar]:hidden">
+<div class="flex items-start gap-4">
+<div class="flex w-40 flex-col gap-2">
+<div class="aspect-square w-full rounded-lg bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDAqxeSwcUJzYO7AshyrPdj-HpHFBfqTDY3U13gsAU9VO0sg0bH7FBUItP4nTvs4xyCaY2R77y1g3QuPadiwmCzWRv3wqy-GJm5D5-l3O1efEsBneNVA6bh_L-ZS4hiActvJ4h9uCnvr4HImqCUEgUVieADV7zjdj8z5OoGD9cjg7eRgBbfKrjkjDVYN3HwpTgAnX1z9xemLQHzdj5gQEunR8KgHNR569jSSqOMb0kVtgFoa9BkzhoxN_rm1u24XuqBDkt3T9FCTREM");'></div>
+<div>
+<p class="font-medium">Sophia Carter</p>
+<p class="text-sm text-slate-500 dark:text-slate-400">12th Grade</p>
+</div>
+</div>
+<div class="flex w-40 flex-col gap-2">
+<div class="aspect-square w-full rounded-lg bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAIekUpswyYRleYS-Ssyq8RA-7moitVvtiVPERl2wDesYwVnO4jws07khnbOJqwwDibVLVg8ru9j4pq8rtjsOjkJQK4Qy-4Zo5z8UarX7A2YQtxkDjNwDTN7nZeY6qlSfX6y6sa8dq81t0rc91hMOGXUKE1gpjebr-BeDuuqr5H7fA48kUafOgrg897U8_I2yeC7pJIYZGBA6TAyCE0RznghN5kxq4nxw87TGkdwMUu2jcAWT0opPNVJa-pLBEsXpRzPtDM_B9UNqim");'></div>
+<div>
+<p class="font-medium">Ethan Walker</p>
+<p class="text-sm text-slate-500 dark:text-slate-400">11th Grade</p>
+</div>
+</div>
+<div class="flex w-40 flex-col gap-2">
+<div class="aspect-square w-full rounded-lg bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCKosbLsWy8MT5lTwZ8ijfbFe0MbMZ5Sl6Cus3M9M__4Xfz9ESQxkZjW_1eTXum5km4qd96n_Veq4bznSTZctQgC7ucYsixPBUXwID5QySBBpIpwvMdHyAX25Yb6uVzP5BqBPRtaiMrB25uty6WrYmhWI9mwXxZLBNtN1yDwLopfOzXsyZvYDIm5HQ3038j5lsuCwtqB39ilpXIo-bNSGWIMtNwkwl8gRdCySVB4k3QOFRm_6w2KIcJbTSiWF3sPyHKKN_z4kM5LtNY");'></div>
+<div>
+<p class="font-medium">Olivia Bennett</p>
+<p class="text-sm text-slate-500 dark:text-slate-400">10th Grade</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="mt-8">
+<h2 class="text-[22px] font-bold leading-tight mb-4">Quick Actions</h2>
+<div class="flex gap-4">
+<button class="flex-1 rounded-lg bg-primary px-4 py-3 text-sm font-bold text-white">Recommend Mentors</button>
+<button class="flex-1 rounded-lg bg-primary/10 dark:bg-primary/20 px-4 py-3 text-sm font-bold text-primary">View Reports</button>
+</div>
+</section>
+<section class="mt-8">
+<h2 class="text-[22px] font-bold leading-tight mb-4">Student Management</h2>
+<button class="flex w-full items-center gap-4 rounded-lg bg-white dark:bg-slate-800 p-4 shadow-sm dark:shadow-none">
+<div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/10 dark:bg-primary/20 text-primary">
+<span class="material-symbols-outlined"> group </span>
+</div>
+<div class="flex flex-col items-start text-left">
+<p class="font-medium">Student Accounts</p>
+<p class="text-sm text-slate-500 dark:text-slate-400">Manage student accounts and access aggregate data</p>
+</div>
+<span class="material-symbols-outlined ml-auto text-slate-400 dark:text-slate-500"> chevron_right </span>
+</button>
+</section>
+</main>
+</div>
+<footer class="sticky bottom-0 border-t border-slate-200 dark:border-slate-800 bg-background-light dark:bg-background-dark pb-3 pt-2">
+<nav class="flex justify-around">
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined"> group </span>
+<p class="text-xs font-medium">Students</p>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-500 dark:text-slate-400" href="#">
+<span class="material-symbols-outlined"> bar_chart </span>
+<p class="text-xs font-medium">Reports</p>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-500 dark:text-slate-400" href="#">
+<span class="material-symbols-outlined"> person </span>
+<p class="text-xs font-medium">Profile</p>
+</a>
+</nav>
+</footer>
+</div>
+
+</body></html>

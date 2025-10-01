@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Stitch Design</title>
+<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+<link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter:wght@400;500;700;900" onload="this.rel='stylesheet'" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1193d4",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101c22",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="relative flex h-auto min-h-screen w-full flex-col justify-between group/design-root overflow-x-hidden">
+<div class="flex flex-col">
+<header class="sticky top-0 z-10 flex items-center justify-between bg-background-light dark:bg-background-dark px-4 py-3">
+<button class="flex items-center justify-center rounded-full w-10 h-10 text-slate-800 dark:text-slate-200">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="text-lg font-bold text-slate-900 dark:text-white flex-1 text-center">Mentors</h1>
+<div class="w-10"></div>
+</header>
+<main class="flex-grow p-4 space-y-4">
+<div class="relative">
+<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+<span class="material-symbols-outlined text-slate-500 dark:text-slate-400">search</span>
+</div>
+<input class="w-full rounded-lg border-0 bg-white dark:bg-slate-800 py-3 pl-10 pr-4 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:ring-2 focus:ring-primary" placeholder="Search mentors" type="text"/>
+</div>
+<div class="flex space-x-2">
+<button class="flex items-center justify-center space-x-2 rounded-full bg-white dark:bg-slate-800 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300">
+<span>English Level</span>
+<span class="material-symbols-outlined text-base">expand_more</span>
+</button>
+<button class="flex items-center justify-center space-x-2 rounded-full bg-white dark:bg-slate-800 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300">
+<span>Status</span>
+<span class="material-symbols-outlined text-base">expand_more</span>
+</button>
+</div>
+<div class="space-y-2">
+<div class="flex items-center justify-between rounded-lg bg-white dark:bg-slate-800 p-3">
+<div class="flex items-center gap-4">
+<img alt="Ethan Carter" class="h-12 w-12 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDu5PvXAqFBXKcMkEgYS8lvCn6_eBfAWgjefiaEmHBcGY6069C-Z_gzkY-zO2NCel9y4Eth_CTh1QkGZ9R47Qp-Euhn20jh1evXQ4DUZuzzwN0LNiiBhNbQex1Po3qV7P8OJqKPpiY6m5rpfE1G_q2F2XWnL_iDWtHb1QfSPYk7TjJaBsdA_NQiM4vguasuCFyC6HXcMKzREa6OqS239-Orl7EjZA7A7kkYeLdety8CgCCYTjjO6o09qEunhbv2UgkoCmJkHMDbEOWM"/>
+<div>
+<p class="font-semibold text-slate-900 dark:text-white">Ethan Carter</p>
+<p class="text-sm text-slate-500 dark:text-slate-400">English Level: Advanced</p>
+<span class="inline-flex items-center rounded-full bg-green-100 dark:bg-green-900/50 px-2 py-0.5 text-xs font-medium text-green-800 dark:text-green-300">Active</span>
+</div>
+</div>
+<button class="flex items-center justify-center rounded-full w-8 h-8 text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+<div class="flex items-center justify-between rounded-lg bg-white dark:bg-slate-800 p-3">
+<div class="flex items-center gap-4">
+<img alt="Sophia Bennett" class="h-12 w-12 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCdXvw87prK7c6aIq7a49m7XgbEZnIU1O3OsIlISvRavhh2ACitgl9PKt_dK4z8attIPNvuKDIC2UjOmmnC6nieiabicNyFB2Yii15p8ksUjuHCHWYGOK1GJlNmAvI6_EL8TXwuRjDGdg4ZtvzCCi-OxNccLx72QlLyldBo5DNachmlvJbF2DSpNlBJS3G_FtnKwCJG7AQTRGa0MYw8MMJ-Is5gAjzkvQSwiybgV7o0MqFdKxqB7m7fCVhafQqJwxhUadBKzhwtGsHa"/>
+<div>
+<p class="font-semibold text-slate-900 dark:text-white">Sophia Bennett</p>
+<p class="text-sm text-slate-500 dark:text-slate-400">English Level: Intermediate</p>
+<span class="inline-flex items-center rounded-full bg-red-100 dark:bg-red-900/50 px-2 py-0.5 text-xs font-medium text-red-800 dark:text-red-300">Inactive</span>
+</div>
+</div>
+<button class="flex items-center justify-center rounded-full w-8 h-8 text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+<div class="flex items-center justify-between rounded-lg bg-white dark:bg-slate-800 p-3">
+<div class="flex items-center gap-4">
+<img alt="Liam Harper" class="h-12 w-12 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC9_pkKbSW2d0EnPmjGEnzT-R4rFh8gPF_ER_EKcMj4BZziaGVdSnirGRIeDmD0oBAZVj_Dx-zxuHswPC0BOozyQw4UvgZZdP7222RyglHaKF7EMVYFQu9PoTlMZ3gJgrDAZ2E-tlVr2vEIcQWPyGQy1EBjaGs6y3U4fprl18aWQd10xh5bjy739ZoTiemlCqS8c_ZLP1qvMp4dSHlxs82W7bdkpx_xGQ-C7cPdq-OIHjiAszwtQfrEWhJNiadmDX37aMvJLqikaDa5"/>
+<div>
+<p class="font-semibold text-slate-900 dark:text-white">Liam Harper</p>
+<p class="text-sm text-slate-500 dark:text-slate-400">English Level: Beginner</p>
+<span class="inline-flex items-center rounded-full bg-green-100 dark:bg-green-900/50 px-2 py-0.5 text-xs font-medium text-green-800 dark:text-green-300">Active</span>
+</div>
+</div>
+<button class="flex items-center justify-center rounded-full w-8 h-8 text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+<div class="flex items-center justify-between rounded-lg bg-white dark:bg-slate-800 p-3">
+<div class="flex items-center gap-4">
+<img alt="Olivia Foster" class="h-12 w-12 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD0rtWRTTDR3o12m34taZ1aIdFklxZkdefR1moumvohbE31ElwkLfEN63pL2CbHlbZUWDseiTc8sSFhlB7kmor6yjVS8Gk1VwZ8oHwVAwv4aOjX2v-eNEJTrl_ioDvGeDhHN3Wv2ny8JG_Ns-dY0dwJgc1z2a3mkCbp6CBk2q8RfCK9ITppABHF1wenNUULVYBz1x0mU1px4JUBSHnjOBdOIsjdHa90aOzYeRyGqRL3D890VT5ws7SiHaJj2dRAiUMvs0WLuxJDfrh7"/>
+<div>
+<p class="font-semibold text-slate-900 dark:text-white">Olivia Foster</p>
+<p class="text-sm text-slate-500 dark:text-slate-400">English Level: Advanced</p>
+<span class="inline-flex items-center rounded-full bg-green-100 dark:bg-green-900/50 px-2 py-0.5 text-xs font-medium text-green-800 dark:text-green-300">Active</span>
+</div>
+</div>
+<button class="flex items-center justify-center rounded-full w-8 h-8 text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+<div class="flex items-center justify-between rounded-lg bg-white dark:bg-slate-800 p-3">
+<div class="flex items-center gap-4">
+<img alt="Noah Parker" class="h-12 w-12 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrb3O9V2OuNok8w1GrJfM-NRlH4EtUOdR9k29e8tcJty-opTm783glk_Bc25Rc3I04VqGn-565uAsegUuJTyu4cXWwrbXYheb85XToWd5pSRchT8P6-Fb4htawQcyCweVlrfXcy2e7mBMZID7nAb89krcDptD6lXYSBqUpl-DraZYsNvILJrPCpcvkyqAkIeHK2iPlBHewE31_H5vAYRLQQQKa54s3BZ1gaeWnkx11sUconJmOD7Uqb2AJP_m3Mya1L2h4ne0-j-9g"/>
+<div>
+<p class="font-semibold text-slate-900 dark:text-white">Noah Parker</p>
+<p class="text-sm text-slate-500 dark:text-slate-400">English Level: Intermediate</p>
+<span class="inline-flex items-center rounded-full bg-red-100 dark:bg-red-900/50 px-2 py-0.5 text-xs font-medium text-red-800 dark:text-red-300">Inactive</span>
+</div>
+</div>
+<button class="flex items-center justify-center rounded-full w-8 h-8 text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+<div class="flex items-center justify-between rounded-lg bg-white dark:bg-slate-800 p-3">
+<div class="flex items-center gap-4">
+<img alt="Ava Mitchell" class="h-12 w-12 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmr-PD5yiuoKv6LkESxeBWFyMmtpNe8LLmlG5e9DJLxqRFMpvXZydDoTYlxKu4klvx3tbLYd9c08YPGeRiZk2GRe8QN-sM42igVXOyOrXPXxAyMP1kObDVuj7DT6I4rnFwKSP6ypI6o7delwGL7IUjJWCrx34W41J99hGWUxfMnPG7Ez-GhMSV4fTno1hSUGgP6L3b1zI1g7T-g5VD7cMsImoujQAGTFFiKfFz0GhAxG69HJn3R2pi2T_7ptwELAREP3cCIGNPbgx8"/>
+<div>
+<p class="font-semibold text-slate-900 dark:text-white">Ava Mitchell</p>
+<p class="text-sm text-slate-500 dark:text-slate-400">English Level: Beginner</p>
+<span class="inline-flex items-center rounded-full bg-green-100 dark:bg-green-900/50 px-2 py-0.5 text-xs font-medium text-green-800 dark:text-green-300">Active</span>
+</div>
+</div>
+<button class="flex items-center justify-center rounded-full w-8 h-8 text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</main>
+</div>
+<footer class="sticky bottom-0 bg-white dark:bg-slate-800/80 backdrop-blur-sm p-4 border-t border-slate-200 dark:border-slate-700">
+<button class="w-full bg-primary text-white font-bold py-3 px-4 rounded-lg">Add New Mentor</button>
+</footer>
+</div>
+
+</body></html>

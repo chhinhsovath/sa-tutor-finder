@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Mentor Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#1193d4",
+            "background-light": "#f6f7f8",
+            "background-dark": "#101c22",
+          },
+          fontFamily: {
+            "display": ["Inter"]
+          },
+          borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="relative flex h-auto min-h-screen w-full flex-col justify-between">
+<div>
+<header class="sticky top-0 z-10 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm">
+<div class="flex items-center p-4">
+<button class="text-slate-800 dark:text-white">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="flex-1 text-center text-lg font-bold text-slate-900 dark:text-white pr-8">Dashboard</h1>
+</div>
+</header>
+<main class="p-4 space-y-8">
+<section class="flex items-center gap-4">
+<div class="w-24 h-24 rounded-full bg-cover bg-center shrink-0" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDCDYQ2zrt1yTs71Q5qWO57MgkIVbILRnkuyLSVKnrdfDUVPe46_s5QsIhnT2sq7G7Az70m-Ayd7apbfcfIDr73rTgRJmj9Laf56SAuerbZ3l_4b2k3ix8KrCIYpRudZNI22E6cl_FoFy1uZPYSZa8P7GRf1xX-9dH4Xe9AdrZCtIAvSszKcVLb7o2jq3nfq4H-vCAfUO0F_wEJrVZMt0RKj6SdvzRIPdGhwgDu5CkLYqNRT1eKqRKvLrTMrDB43eUxqcg2avQmGDJ9");'></div>
+<div>
+<h2 class="text-xl font-bold text-slate-900 dark:text-white">Ethan Carter</h2>
+<p class="text-slate-600 dark:text-slate-400">Mentor</p>
+<div class="flex items-center gap-1 text-slate-600 dark:text-slate-400">
+<span class="material-symbols-outlined text-amber-500 text-base" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-sm font-medium">4.9 (120 reviews)</span>
+</div>
+</div>
+</section>
+<section>
+<h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Upcoming Sessions</h3>
+<div class="space-y-3">
+<div class="flex items-center gap-4 bg-white dark:bg-slate-800 p-3 rounded-lg">
+<div class="w-12 h-12 rounded-full bg-cover bg-center shrink-0" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDMiCEWKGIEOiE-A3qD8QMW4e9Gco_yvkFUzvvWap2VnQ_iAzXk88p-gMAgbtmGCJX90Ti7osr_Hlf6H7tIaY-6TQX7GDcxjWhjIEH-7V0MD70g_vO9i4lPm1zkrrRm9NrqrE7JZkMLN-t9bANI8l6fOmaBAOGqGEzBBI0Z3WLkfcTITFq3GI-P9aylY-TmdcNbKachpZW_9QkyAyEWz_u9xSZ85-Asvm9sjOqKDrtzEZYQPZrqPd9nq_a5UtKuDtGTrw7hZAk36iNM");'></div>
+<div>
+<p class="font-semibold text-slate-800 dark:text-white">10:00 AM - 11:00 AM</p>
+<p class="text-sm text-slate-600 dark:text-slate-400">Math 101</p>
+</div>
+<button class="ml-auto text-primary">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+<div class="flex items-center gap-4 bg-white dark:bg-slate-800 p-3 rounded-lg">
+<div class="w-12 h-12 rounded-full bg-cover bg-center shrink-0" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBMHZe9tbbqzON30tye4u9UvjAUhVfMtRIqn4Hw5Laq7_dNQta2Edxe3VK858Z04lSR9nE2qVrxZ8jfziZLW7k2RjxavvAySTpzFRDc9hvlbN7OeD1pihi2F4pXZUftry0p6SVrAZFeasqnSagkh6511RF9CKZdkWnnFw12_v6jAnjKQhRdgOS2CVIkRBXsEYus2jmxPs5hW6A4HPQw-TC6NV1fhHugDDzw4YVjGt99pfJHgD0CKTaXq6mV7YtGBRVU4MA9yKOM6aGS");'></div>
+<div>
+<p class="font-semibold text-slate-800 dark:text-white">1:00 PM - 2:00 PM</p>
+<p class="text-sm text-slate-600 dark:text-slate-400">Science 202</p>
+</div>
+<button class="ml-auto text-primary">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</section>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-white dark:bg-slate-800 p-4 rounded-lg flex flex-col items-start gap-2">
+<div class="bg-primary/20 text-primary p-2 rounded-full">
+<span class="material-symbols-outlined">calendar_today</span>
+</div>
+<h4 class="text-base font-semibold text-slate-900 dark:text-white">Availability</h4>
+<p class="text-sm text-slate-600 dark:text-slate-400">Mon - Fri</p>
+</div>
+<div class="bg-white dark:bg-slate-800 p-4 rounded-lg flex flex-col items-start gap-2">
+<div class="bg-primary/20 text-primary p-2 rounded-full">
+<span class="material-symbols-outlined">payments</span>
+</div>
+<h4 class="text-base font-semibold text-slate-900 dark:text-white">Earnings</h4>
+<p class="text-sm text-slate-600 dark:text-slate-400">$500</p>
+</div>
+<div class="bg-white dark:bg-slate-800 p-4 rounded-lg flex flex-col items-start gap-2">
+<div class="bg-primary/20 text-primary p-2 rounded-full">
+<span class="material-symbols-outlined">history</span>
+</div>
+<h4 class="text-base font-semibold text-slate-900 dark:text-white">History</h4>
+<p class="text-sm text-slate-600 dark:text-slate-400">25 Sessions</p>
+</div>
+<div class="bg-primary p-4 rounded-lg flex flex-col items-start justify-center gap-2 text-white">
+<span class="material-symbols-outlined text-3xl">add</span>
+<h4 class="text-base font-semibold">New Session</h4>
+</div>
+</div>
+<section>
+<h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Student Feedback</h3>
+<div class="bg-white dark:bg-slate-800 p-4 rounded-lg">
+<div class="flex items-start gap-3">
+<div class="w-10 h-10 rounded-full bg-cover bg-center shrink-0" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDN0Ssaaz6EytrX9I8OcApUrbLoG-sf4FUcVhlrflKvLD2oDAM7FizLbDEbLtUKGSAnphPcJ5mzIHAOb2ngBF9xjKx8C_M2wkdbvpMpzOcDj58cmoWqV0G4v5eqBzjHdmwN4qdPaaH8e-pRkx3cCvOi3_urkorYHH-jWHNoZboTQYrxezb7piHVdWwwRX9zA3bZOyhn67yAYF6_030ZHEH4IwjPEd3aZflqehXzd_ypEwwJJIvXqHJ8tP16fXzR450T7tFMiA9JYCaC");'></div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<div>
+<p class="font-semibold text-slate-800 dark:text-white">Sophia Lee</p>
+<p class="text-sm text-slate-500 dark:text-slate-400">2 weeks ago</p>
+</div>
+<div class="flex gap-0.5 text-amber-500">
+<span class="material-symbols-outlined text-base" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-base" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-base" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-base" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-base" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+<p class="mt-2 text-slate-700 dark:text-slate-300">Ethan is an excellent tutor! He helped me understand complex concepts easily.</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+</div>
+<footer class="sticky bottom-0 bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700">
+<div class="flex justify-around items-center px-4 py-2">
+<a class="flex flex-col items-center gap-1 text-slate-600 dark:text-slate-400" href="#">
+<span class="material-symbols-outlined">calendar_month</span>
+<p class="text-xs font-medium">Sessions</p>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-600 dark:text-slate-400" href="#">
+<span class="material-symbols-outlined">schedule</span>
+<p class="text-xs font-medium">Availability</p>
+</a>
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">person</span>
+<p class="text-xs font-medium">Profile</p>
+</a>
+</div>
+</footer>
+</div>
+
+</body></html>

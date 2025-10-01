@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+<link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B700%3B900" onload="this.rel='stylesheet'" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#1193d4",
+              "background-light": "#f6f7f8",
+              "background-dark": "#101c22",
+            },
+            fontFamily: {
+              display: ["Inter"],
+            },
+            borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
+          },
+        },
+      };
+    </script>
+<title>Student Management</title>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-display bg-background-light dark:bg-background-dark">
+<div class="flex flex-col h-screen">
+<header class="flex items-center justify-between p-4 border-b border-primary/20 dark:border-primary/30">
+<button class="text-black dark:text-white">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="text-lg font-bold text-black dark:text-white">Students</h1>
+<div class="w-8"></div>
+</header>
+<main class="flex-1 overflow-y-auto">
+<div class="p-4 space-y-4">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-primary">search</span>
+<input class="w-full pl-10 pr-4 py-2 rounded-lg bg-white dark:bg-background-dark border border-primary/20 dark:border-primary/30 focus:ring-primary focus:border-primary text-black dark:text-white placeholder:text-primary/50" placeholder="Search students" type="text"/>
+</div>
+<div class="flex space-x-2">
+<button class="flex items-center space-x-1 px-3 py-1.5 rounded-lg bg-primary/20 dark:bg-primary/30 text-black dark:text-white text-sm">
+<span>Status</span>
+<span class="material-symbols-outlined">arrow_drop_down</span>
+</button>
+<button class="flex items-center space-x-1 px-3 py-1.5 rounded-lg bg-primary/20 dark:bg-primary/30 text-black dark:text-white text-sm">
+<span>Guidance Counselor</span>
+<span class="material-symbols-outlined">arrow_drop_down</span>
+</button>
+</div>
+</div>
+<div class="divide-y divide-primary/20 dark:divide-primary/30">
+<div class="flex items-center p-4">
+<img alt="Ethan Carter" class="w-12 h-12 rounded-full mr-4" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAedi6GuIMgqy8Fsn0L8oQ0p2GWUCeNUbR9kDKrl8oLaySY-Ri7hQRaKWducMzWRuNMqcAOKDdWnsEWNkmexlKYIcCqJ774rrnqnvmnCMrePsoNkxl3pMPrpMysgo9bpjncSC-HsmoUsD1tdDV-dPF9KPlNHPzuAFUpbeOLgpyhN0d3XxAdhZ0amK9sG9z_5P7JUiCMfg86gYv3HdbJkIslOlRv9sm2S7dteRxWT53ls7quu76-ESIsiQUyZ5tWcTfRr2AgcZHFaHCC"/>
+<div class="flex-1">
+<p class="font-semibold text-black dark:text-white">Ethan Carter</p>
+<p class="text-sm text-primary/80 dark:text-primary/70">Counselor: Ms. Johnson</p>
+</div>
+<div class="flex items-center space-x-1">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+<span class="text-xs text-primary">Active</span>
+</div>
+<button class="ml-4 text-primary">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<div class="flex items-center p-4">
+<img alt="Olivia Bennett" class="w-12 h-12 rounded-full mr-4" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDP-L0cLnIeuGDBjpeN4-BSo-xtkfOLHskSy_7Xqo2C19vAMRRBhX7wG5U992ca3O8_iNrx3E-NALsXviQW9_r2NXxa-2BLeJClIttzlfEoC-pe3HQkfxvBz2lQafKm9oKOJwVPD87iFXHYLHjv4GNs_le9s3iDdNMWOfqUKACmX_y68tALMiuvcnkv59OUGLAQ_j63B0XqVAQAS9qrnbmgHtsygqHseCz0REGTGQit3r3qnp4GlTUoIEW17K623ihpa4cDXRuaN0IV"/>
+<div class="flex-1">
+<p class="font-semibold text-black dark:text-white">Olivia Bennett</p>
+<p class="text-sm text-primary/80 dark:text-primary/70">Counselor: Mr. Davis</p>
+</div>
+<div class="flex items-center space-x-1">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+<span class="text-xs text-primary">Active</span>
+</div>
+<button class="ml-4 text-primary">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<div class="flex items-center p-4">
+<img alt="Noah Thompson" class="w-12 h-12 rounded-full mr-4" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBGy_76MGKW6wIMe4lPp6IQvFp3o0lHQTaGdzB76VD_whhwBrH8mRbjqv7c9AF5DzfAfs5fcI53tquU44LnHDKXQa6yK5QTmrfL8miyhxR86G02RslYLrhhXsDPCyhIsc85rtelBsUM5u3s02CFfMS88W6zzC6XCPE6KDPk9XGVImRuBVmFstYcwLTh4hMdNXzmxJk5do6EWlnx62hBSTgm38lNhvQ2LoqZ52msHTsSvdmSd1td3qb-q820KqCFriwqQzks9jyoUrBX"/>
+<div class="flex-1">
+<p class="font-semibold text-black dark:text-white">Noah Thompson</p>
+<p class="text-sm text-primary/80 dark:text-primary/70">Counselor: Ms. Johnson</p>
+</div>
+<div class="flex items-center space-x-1">
+<div class="w-2 h-2 rounded-full bg-primary/40"></div>
+<span class="text-xs text-primary/40">Inactive</span>
+</div>
+<button class="ml-4 text-primary">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<div class="flex items-center p-4">
+<img alt="Ava Harper" class="w-12 h-12 rounded-full mr-4" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDTUKbdWmA6HypM9QFUA4qY04XaAkjW-0AvBOhrnxeMyROWmJJv-rZLxf8CRjfn9hQo7Zue1qYvR41cAq7HYIFpE-yq3egzOXj-F__HSH01n-xGAwArIEz8szhwU8q0vHFkSwkPJIcgSixThvL_IFyzNssAux4GHyrqnQBmT8wI2V7GRiOaNC4PIgQqB6Lvroly4RyyhluQQBegfH7X7QJQCbD9tQDdmAqJv5myQ-M4YEijrxDrf-tiTuPY3qaTB0eJqahbP0u4xsyg"/>
+<div class="flex-1">
+<p class="font-semibold text-black dark:text-white">Ava Harper</p>
+<p class="text-sm text-primary/80 dark:text-primary/70">Counselor: Mr. Davis</p>
+</div>
+<div class="flex items-center space-x-1">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+<span class="text-xs text-primary">Active</span>
+</div>
+<button class="ml-4 text-primary">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<div class="flex items-center p-4">
+<img alt="Liam Foster" class="w-12 h-12 rounded-full mr-4" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvOo6WOnE6RUzggypzfGURIsxgZ-QTJcvHK5LDQv2nG-4SXjsLm6ApPirhGYnyD8bd6OkmWjntjuMzvUxiQq0SrG57hmqSbvImP_KMWIwtGtVd6ZxJJ0cMRsTnWHDosUlC7h3_pfKMAqtOC1n7QTJiR0BgLTwe3WLFaNfvBVN2uf8wIBlLvOcrPK5tVzKw6KgpRYqX8rFigv3An8fFIFZvCAwRPncfSH9dFqxHAMcjXGq3MDBZrbAt4mm5Y7elUyWM1ZTk_9Q4CUfl"/>
+<div class="flex-1">
+<p class="font-semibold text-black dark:text-white">Liam Foster</p>
+<p class="text-sm text-primary/80 dark:text-primary/70">Counselor: Ms. Johnson</p>
+</div>
+<div class="flex items-center space-x-1">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+<span class="text-xs text-primary">Active</span>
+</div>
+<button class="ml-4 text-primary">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<div class="flex items-center p-4">
+<img alt="Isabella Reed" class="w-12 h-12 rounded-full mr-4" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAa704LvHg_Bfuzcih89Scf88UDW_altPKhNv5pScTtjZ1V0gOL1Vr77dKfWkEt8Nuy8V58kCf2uAep44rb6UED5mqj6AS-VynDNcVxqwAH_IqcTUB4BjOvvrltreyLd1gYYm5xjqiwST5NYvdirYBmyJwdCpm6Cwy1lLNHmUkvlQpI-PGvQSsqT5oOHr2D0dddE4AblCKiqenaKjejpKNhE7OOkPyzgtu15CA7hXOiDIivZ0GRzb5lgdvteZzQdrpuJncKN99pyo6Y"/>
+<div class="flex-1">
+<p class="font-semibold text-black dark:text-white">Isabella Reed</p>
+<p class="text-sm text-primary/80 dark:text-primary/70">Counselor: Mr. Davis</p>
+</div>
+<div class="flex items-center space-x-1">
+<div class="w-2 h-2 rounded-full bg-primary/40"></div>
+<span class="text-xs text-primary/40">Inactive</span>
+</div>
+<button class="ml-4 text-primary">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</div>
+</main>
+<footer class="p-4">
+<button class="w-full flex items-center justify-center space-x-2 bg-primary text-white font-bold py-3 rounded-lg">
+<span class="material-symbols-outlined">add</span>
+<span>Add New Student</span>
+</button>
+</footer>
+</div>
+
+</body></html>

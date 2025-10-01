@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Tutor Login</title>
+<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+<link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B700%3B900&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900" onload="this.rel='stylesheet'" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1193d4",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101c22",
+                        "text-light": "#111827",
+                        "text-dark": "#f3f4f6",
+                        "subtext-light": "#6b7280",
+                        "subtext-dark": "#9ca3af",
+                        "input-light": "#e5e7eb",
+                        "input-dark": "#374151"
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "0.75rem",
+                        "xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="flex flex-col h-screen">
+<header class="flex items-center p-4">
+<button class="text-text-light dark:text-text-dark">
+<span class="material-symbols-outlined">arrow_back_ios_new</span>
+</button>
+</header>
+<main class="flex-1 flex flex-col justify-center px-6">
+<div class="text-center mb-12">
+<h1 class="text-3xl font-bold text-text-light dark:text-text-dark tracking-tight">Welcome Back</h1>
+<p class="text-subtext-light dark:text-subtext-dark mt-2">Log in to continue your learning journey.</p>
+</div>
+<form class="space-y-6">
+<div>
+<label class="sr-only" for="email">Email</label>
+<input class="w-full h-14 px-4 bg-input-light dark:bg-input-dark text-text-light dark:text-text-dark placeholder-subtext-light dark:placeholder-subtext-dark border-0 rounded-lg focus:ring-2 focus:ring-primary" id="email" name="email" placeholder="Email" type="email"/>
+</div>
+<div>
+<label class="sr-only" for="password">Password</label>
+<input class="w-full h-14 px-4 bg-input-light dark:bg-input-dark text-text-light dark:text-text-dark placeholder-subtext-light dark:placeholder-subtext-dark border-0 rounded-lg focus:ring-2 focus:ring-primary" id="password" name="password" placeholder="Password" type="password"/>
+</div>
+<div class="text-right">
+<a class="text-sm font-medium text-primary hover:underline" href="#">Forgot Password?</a>
+</div>
+<div>
+<button class="w-full h-14 bg-primary text-white font-bold rounded-lg hover:bg-primary/90 transition-colors duration-300" type="submit">
+                        Login
+                    </button>
+</div>
+</form>
+</main>
+<footer class="py-8 px-6 text-center">
+<p class="text-subtext-light dark:text-subtext-dark">
+                Don't have an account? <a class="font-bold text-primary hover:underline" href="#">Sign up</a>
+</p>
+</footer>
+</div>
+
+</body></html>

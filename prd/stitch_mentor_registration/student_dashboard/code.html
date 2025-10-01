@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Stitch Design</title>
+<link href="data:image/x-icon;base64," rel="icon" type="image/x-icon"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1193d4",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101c22",
+                        "foreground-light": "#111618",
+                        "foreground-dark": "#f0f3f4",
+                        "subtle-light": "#617c89",
+                        "subtle-dark": "#a0b1b9"
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "0.75rem",
+                        "xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-foreground-light dark:text-foreground-dark">
+<div class="relative flex min-h-screen w-full flex-col justify-between overflow-x-hidden">
+<main class="flex-grow">
+<header class="flex items-center justify-between p-4 bg-background-light dark:bg-background-dark sticky top-0 z-10">
+<h1 class="text-2xl font-bold">Hi, Alex!</h1>
+<button class="p-2 rounded-full hover:bg-primary/10">
+<span class="material-symbols-outlined text-2xl">
+                        notifications
+                    </span>
+</button>
+</header>
+<div class="px-4 py-6 space-y-8">
+<section>
+<h2 class="text-xl font-bold mb-4">Today's Sessions</h2>
+<div class="bg-white dark:bg-foreground-light/5 rounded-lg p-4 flex items-center justify-between gap-4 shadow-sm">
+<div class="flex flex-col gap-1">
+<p class="text-sm text-subtle-light dark:text-subtle-dark">10:00 AM</p>
+<p class="font-bold text-base">Math Tutoring with Ms. Harper</p>
+<p class="text-sm text-subtle-light dark:text-subtle-dark">Online</p>
+</div>
+<div class="w-20 h-20 bg-center bg-no-repeat bg-cover rounded-lg" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuApjlxK-go_zR7XKs3B4W0Ax66iEbSgKOg0RdwGYpKPSvhtYXLGAEp0JzMVhl7SQzm7jfuiHIIJHVgYG7e7HnI1o3gbfWtbvzbifHZALmJudgB4o0FrA7NFHx6NgpOjwDE8seDBJ9OfQXn0tRbwLFItzGue5ho6PX0NNs7mLjW57ak2w0e_Ql3EcpFvma_XbqiigoTXzi7Odvpa9OKrNY9Tumvv2h8ahwcx6Ve3gPKSeR4ZGcQz4jDNwIoP6_41GskcAuESPygYWN-7");'></div>
+</div>
+</section>
+<section>
+<h2 class="text-xl font-bold mb-4">Recommended Mentors</h2>
+<div class="flex overflow-x-auto [-ms-scrollbar-style:none] [scrollbar-width:none] [&amp;::-webkit-scrollbar]:hidden -mx-4 px-4 pb-2">
+<div class="flex items-start gap-4">
+<div class="flex flex-col gap-2 w-40 flex-shrink-0">
+<div class="w-full aspect-square bg-center bg-no-repeat bg-cover rounded-lg" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCjO3gx8WkSbX9KfOhCQFBcFOVztfcsSOLlT-gWgrEyb7dUkn7HLJoEsV-3_Ef-rcMRdUMZ8JEhcnLjeqMEr3Q8l555zcvaLosjbpiRgS0wG7uyTMzhX4YeA_1801TWmSxkgVGddUDxSfYenqiTO7bRbmrKwkvqu2RX3KSAOHa0kJUqKvrNJJvtfB_G_Jm5Zbx_4KG4Vpl_p1IY1NMFEtMPF7MLiETHMo2oSu6rQfolR942aoAP5sZQYXY7RYN8EPYUaL2irV7JMUaf");'></div>
+<div>
+<p class="font-medium text-base">Ms. Harper</p>
+<p class="text-sm text-subtle-light dark:text-subtle-dark">Math</p>
+</div>
+</div>
+<div class="flex flex-col gap-2 w-40 flex-shrink-0">
+<div class="w-full aspect-square bg-center bg-no-repeat bg-cover rounded-lg" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBL11KrEIEKtUCOZPr9nnEN7ruUNso6hnsljyr_YnVICipV-auMjjgvZU1sZYwFpEKoWrouk5G5rs-69Kb31MQpNvqcBux6BL-Pz0wC5Vqn78tQaZyWF0QVdcq6BSlh36q8uekNxtctPjAzwWDLwL7H-qFp3KRXvm1JxWWzU5Im_5CK6vhs_2fhnu0CPN7sJIie8G8Sax6b8n958HSKoptY9Qeqo-3nFLfNdgpUxPki-hnCbFoATyEfBcObjOOE3ycuDG9WK5qovU2b");'></div>
+<div>
+<p class="font-medium text-base">Mr. Davis</p>
+<p class="text-sm text-subtle-light dark:text-subtle-dark">Science</p>
+</div>
+</div>
+<div class="flex flex-col gap-2 w-40 flex-shrink-0">
+<div class="w-full aspect-square bg-center bg-no-repeat bg-cover rounded-lg" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD-Imr1K7dHW2P9QW9Vky3tVw494GQLXmMXQOFb1DL5HdB0pFeoOc5vmBknfeeUaPARMYFE5Je3pY9XZcEX7F0g69l-PRcJD9fSrWaWNMgo26lsh0xYfdVFrE0Cm8mPDdb1TXiRDY6eaVb0-sdvBO_y52cLhwzn5gTwvnbMZlPkq5yMjidSvwDFWQCX3gnWxfnkCvmgrUDMZmjbt1bjwwVFeVJSfB95wDz8D5chogjyS9qTNiI7IZIwNV9_Q7wRvijX6h5uUDhMhaBH");'></div>
+<div>
+<p class="font-medium text-base">Ms. Lee</p>
+<p class="text-sm text-subtle-light dark:text-subtle-dark">English</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section>
+<h2 class="text-xl font-bold mb-4">Quick Actions</h2>
+<div class="grid grid-cols-2 gap-4">
+<button class="flex items-center justify-center rounded-lg h-12 px-4 bg-primary text-white font-bold text-sm">
+<span>Search Mentors</span>
+</button>
+<button class="flex items-center justify-center rounded-lg h-12 px-4 bg-primary/10 dark:bg-primary/20 text-primary font-bold text-sm">
+<span>Saved Mentors</span>
+</button>
+</div>
+</section>
+</div>
+</main>
+<footer class="sticky bottom-0 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm border-t border-primary/20">
+<nav class="flex justify-around items-center h-20">
+<a class="flex flex-col items-center justify-center gap-1 text-subtle-light dark:text-subtle-dark" href="#">
+<span class="material-symbols-outlined text-2xl">search</span>
+<p class="text-xs font-medium">Search</p>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined text-2xl">calendar_month</span>
+<p class="text-xs font-bold">My Sessions</p>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 text-subtle-light dark:text-subtle-dark" href="#">
+<span class="material-symbols-outlined text-2xl">person</span>
+<p class="text-xs font-medium">Profile</p>
+</a>
+</nav>
+<div class="h-safe-area-bottom"></div>
+</footer>
+</div>
+
+</body></html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Find a Mentor</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#1193d4",
+            "background-light": "#f6f7f8",
+            "background-dark": "#101c22",
+            "content-light": "#1f2937",
+            "content-dark": "#d1d5db",
+            "subtle-light": "#6b7280",
+            "subtle-dark": "#9ca3af",
+            "surface-light": "#ffffff",
+            "surface-dark": "#1f2937",
+            "border-light": "#e5e7eb",
+            "border-dark": "#374151"
+          },
+          fontFamily: {
+            "display": ["Inter", "sans-serif"]
+          },
+          borderRadius: {
+            "DEFAULT": "0.5rem",
+            "lg": "0.75rem",
+            "xl": "1rem",
+            "full": "9999px"
+          },
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings:
+      'FILL' 0,
+      'wght' 400,
+      'GRAD' 0,
+      'opsz' 24
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-display bg-background-light dark:bg-background-dark">
+<div class="relative flex h-auto min-h-screen w-full flex-col justify-between group/design-root overflow-x-hidden">
+<div class="flex-grow">
+<header class="bg-surface-light dark:bg-surface-dark/80 backdrop-blur-sm sticky top-0 z-10 border-b border-border-light dark:border-border-dark">
+<div class="flex items-center p-4">
+<button class="text-content-light dark:text-content-dark">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="text-lg font-bold text-content-light dark:text-content-dark flex-1 text-center pr-6">Find a Mentor</h1>
+</div>
+</header>
+<main class="p-4 space-y-4">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-subtle-light dark:text-subtle-dark">search</span>
+<input class="w-full pl-10 pr-4 py-3 rounded-lg border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark text-content-light dark:text-content-dark placeholder-subtle-light dark:placeholder-subtle-dark focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Search for a mentor" type="text"/>
+</div>
+<div class="flex gap-2">
+<button class="flex items-center justify-center gap-x-1 rounded-full bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark px-4 py-2 text-sm font-medium text-content-light dark:text-content-dark">
+<span>Day</span>
+<span class="material-symbols-outlined text-base">expand_more</span>
+</button>
+<button class="flex items-center justify-center gap-x-1 rounded-full bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark px-4 py-2 text-sm font-medium text-content-light dark:text-content-dark">
+<span>Time</span>
+<span class="material-symbols-outlined text-base">expand_more</span>
+</button>
+<button class="flex items-center justify-center gap-x-1 rounded-full bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark px-4 py-2 text-sm font-medium text-content-light dark:text-content-dark whitespace-nowrap">
+<span>English level</span>
+<span class="material-symbols-outlined text-base">expand_more</span>
+</button>
+</div>
+<div class="space-y-3">
+<div class="flex items-center gap-4 bg-surface-light dark:bg-surface-dark p-3 rounded-lg">
+<img alt="Sophia Carter" class="h-14 w-14 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5RbBye84PyP1R8jnA6j3krvMbGuuMoVJbEiMLqcJLsIEHcDQ-QmkfxvFAB-CULRvWFTo1LdWteCfyuhFIwAIKMOCFP9DFxavTkjXhGkOU9iRx-vnVg3j22TZIPgBMaCTVF7PSzge53xgZ68mR6ebjGS29CUVYQjA_2B-nE7BNSEXKI-qK-q0KtaO-M2XDSioIVbPyKnUbqJvOpWGFpiig_RFSmJ82X0uZB4Tlw4gniozCYBv9HSouvkIMkluqylqbCjZiBYUSDcgZ"/>
+<div class="flex-grow">
+<p class="font-bold text-content-light dark:text-content-dark">Sophia Carter</p>
+<p class="text-sm text-subtle-light dark:text-subtle-dark">Advanced</p>
+</div>
+<span class="material-symbols-outlined text-subtle-light dark:text-subtle-dark">chevron_right</span>
+</div>
+<div class="flex items-center gap-4 bg-surface-light dark:bg-surface-dark p-3 rounded-lg">
+<img alt="Ethan Bennett" class="h-14 w-14 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOrVT6xMDFXg57Ei3njbvftQwhy1ZbXhCtBukj1JcJr7WB1fWkP5BdxlZZFDE6Q24VGsz9UJ7S4Iqbp9Iy5e_5f6wdGSiqpbPdZ0EolsrrjLUO_0Ka28Lq_YOc147Pr8jH-6CW_s6bbk_p0X5sBU0hdttBKn3hbkXvFGaZ5ZqXwO2zpVH5cKMiPgduLC6aAhqIJul6jLmFi2TdUMXb3jnq4Fg6sr_gk13xRId2UTaISE0yztw2RoTCA00WederCyLRRTkO1xnYh-cJ"/>
+<div class="flex-grow">
+<p class="font-bold text-content-light dark:text-content-dark">Ethan Bennett</p>
+<p class="text-sm text-subtle-light dark:text-subtle-dark">Intermediate</p>
+</div>
+<span class="material-symbols-outlined text-subtle-light dark:text-subtle-dark">chevron_right</span>
+</div>
+<div class="flex items-center gap-4 bg-surface-light dark:bg-surface-dark p-3 rounded-lg">
+<img alt="Olivia Hayes" class="h-14 w-14 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVMjFEfu9oUdUManED5uybMfgVx7OB5tc4rVrF1wYj-7ENdCHLIr-AiMIPVLaKDT7bFwFA82GzOyX2xBUxbMBEWRvt8z0vJd_4chE3GxlsFQrAjP3iUQYpeEC9PigxF8O6y-sNfLSyPCD6FvZwOFj5EMGMjs1dnB57r2wEkBxSTTp8kZDt45YF84Pua9p0iwfB7eDTnoSP40hUNaC5-QVuSNyJuO0mZCao-Pg0G9HH7ySUlbzNmX0JHIJ7sBjUpJ02DRwz4egPdbOl"/>
+<div class="flex-grow">
+<p class="font-bold text-content-light dark:text-content-dark">Olivia Hayes</p>
+<p class="text-sm text-subtle-light dark:text-subtle-dark">Beginner</p>
+</div>
+<span class="material-symbols-outlined text-subtle-light dark:text-subtle-dark">chevron_right</span>
+</div>
+<div class="flex items-center gap-4 bg-surface-light dark:bg-surface-dark p-3 rounded-lg">
+<img alt="Liam Foster" class="h-14 w-14 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBoRaJ7x-GLv12qZxhkz5HkUiowvWwUnIkkUkXY4i1U3hQeCzvqeY7R2PZ8bfZ_yAeuNAwHW6OUi_etgpUab9ylJvh2tDVB84KUOvb3Aub2Ysz01INkF8ariBgGlUpipCZ4aTOtJFk-hnzAkCYIsdrk810E5B1KX1620_WOKlcUshJSCAaTIAYd8GCBclSTcnn0XNKsQ6lDWriybIxd6St8OlPTa_j3rzivz_D8NLg0OMBPsp5yL6xPb6BYTKiT-N136stOjz-JIqDj"/>
+<div class="flex-grow">
+<p class="font-bold text-content-light dark:text-content-dark">Liam Foster</p>
+<p class="text-sm text-subtle-light dark:text-subtle-dark">Advanced</p>
+</div>
+<span class="material-symbols-outlined text-subtle-light dark:text-subtle-dark">chevron_right</span>
+</div>
+</div>
+</main>
+</div>
+<footer class="bg-surface-light dark:bg-surface-dark/80 backdrop-blur-sm sticky bottom-0 z-10 border-t border-border-light dark:border-border-dark">
+<nav class="flex justify-around py-2">
+<a class="flex flex-col items-center justify-center gap-1 w-full text-primary" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">search</span>
+<p class="text-xs font-medium">Search</p>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 w-full text-subtle-light dark:text-subtle-dark" href="#">
+<span class="material-symbols-outlined">group</span>
+<p class="text-xs font-medium">Mentors</p>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 w-full text-subtle-light dark:text-subtle-dark" href="#">
+<span class="material-symbols-outlined">person</span>
+<p class="text-xs font-medium">Profile</p>
+</a>
+</nav>
+<div class="h-5 bg-surface-light dark:bg-surface-dark"></div>
+</footer>
+</div>
+
+</body></html>

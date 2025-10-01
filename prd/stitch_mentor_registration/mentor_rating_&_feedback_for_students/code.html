@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Rate Mentor</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1193d4",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101c22",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="flex flex-col h-screen justify-between">
+<div>
+<header class="flex items-center justify-between p-4 border-b border-background-light dark:border-background-dark shadow-sm">
+<button class="text-gray-800 dark:text-gray-200">
+<span class="material-symbols-outlined">close</span>
+</button>
+<h1 class="text-lg font-bold text-gray-900 dark:text-white flex-1 text-center">Rate your mentor</h1>
+<div class="w-8"></div>
+</header>
+<main class="p-6">
+<div class="flex items-center gap-4 mb-8">
+<div class="w-24 h-24 rounded-full bg-cover bg-center" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBO-VFBi2F0sMs46Dz92M63JY9P1SF4hpxG6UBXRR44mWWfqr12r4ATrEfYj_16rIJtnXtNyh-VaEbDgd5dVnxKdycHJvkj0RXx8QGWYD9wJGI4r5CxrJlLjWMNZF1j0yjkr_g8oSEIGACZaVVHqZAf3zXT_3aXb2ETTaaI7kvTd7nj8SlMylvWYccd5u9dKeUj1VFXsZBmDXKNSwMcZLiXf1ziccGkf21JtIImX80MxWS1fIh3owUwQ-qyLZtaSfg1gYG4c-G643kz');"></div>
+<div>
+<h2 class="text-xl font-bold text-gray-900 dark:text-white">Sophia Carter</h2>
+<p class="text-gray-500 dark:text-gray-400">Mentor</p>
+</div>
+</div>
+<div class="mb-8">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">How was your session?</h3>
+<div class="flex justify-center space-x-2 text-4xl text-gray-300 dark:text-gray-600">
+<label class="cursor-pointer">
+<input class="sr-only peer" name="rating" type="radio" value="1"/>
+<span class="material-symbols-outlined peer-checked:text-primary transition-colors">star</span>
+</label>
+<label class="cursor-pointer">
+<input class="sr-only peer" name="rating" type="radio" value="2"/>
+<span class="material-symbols-outlined peer-checked:text-primary transition-colors">star</span>
+</label>
+<label class="cursor-pointer">
+<input checked="" class="sr-only peer" name="rating" type="radio" value="3"/>
+<span class="material-symbols-outlined peer-checked:text-primary transition-colors">star</span>
+</label>
+<label class="cursor-pointer">
+<input class="sr-only peer" name="rating" type="radio" value="4"/>
+<span class="material-symbols-outlined peer-checked:text-primary transition-colors">star</span>
+</label>
+<label class="cursor-pointer">
+<input class="sr-only peer" name="rating" type="radio" value="5"/>
+<span class="material-symbols-outlined peer-checked:text-primary transition-colors">star</span>
+</label>
+</div>
+</div>
+<div>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Share your feedback</h3>
+<textarea class="w-full h-32 p-4 rounded-lg bg-white dark:bg-background-dark border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary" placeholder="Tell us about Sophia's teaching style, helpfulness, and your overall experience."></textarea>
+</div>
+</main>
+</div>
+<footer class="p-4 bg-background-light dark:bg-background-dark">
+<button class="w-full bg-primary text-white font-bold py-3 px-4 rounded-lg hover:bg-primary/90 transition-colors">
+                Submit Review
+            </button>
+</footer>
+</div>
+
+</body></html>

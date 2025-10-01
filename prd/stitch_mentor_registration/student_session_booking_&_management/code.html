@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Book a Session</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1193d4",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101c22",
+                        "foreground-light": "#111827",
+                        "foreground-dark": "#f9fafb",
+                        "subtle-light": "#6b7280",
+                        "subtle-dark": "#9ca3af",
+                        "border-light": "#e5e7eb",
+                        "border-dark": "#374151"
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "0.75rem",
+                        "xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings:
+            'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-foreground-light dark:text-foreground-dark">
+<div class="max-w-md mx-auto">
+<div class="sticky top-0 z-10 bg-background-light dark:bg-background-dark pt-4">
+<header class="flex items-center justify-between px-4 pb-4">
+<button class="p-2 -ml-2">
+<span class="material-symbols-outlined text-foreground-light dark:text-foreground-dark">arrow_back</span>
+</button>
+<h1 class="text-lg font-bold">Book a Session</h1>
+<div class="w-8"></div>
+</header>
+</div>
+<main class="p-4 space-y-6">
+<div class="flex items-center gap-4">
+<img alt="Sarah Chen" class="w-20 h-20 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBoZxeITgY02JoUIDxHXL0g4_q6MRU49xMvgTcQ3XzXxH2-QePqqfmqnYHHYCnzQZWtSIWT5KwW0LVgqO4CtqEd7SeWLP-eoFx7pJEV4izXrd_CFXhzFnVPlcDJpbAEMl9oY3ORr05igi1JwLsMd2figWr5m4sEb4cGOpFLSRSsCGK_g8ZA9D-6oMomrbrddrclhfJAlmARwtvwQo3kigXDPNCvTYpqKel4Y4wn0zyNDl5rTOVumiDiMPsBKHgP07UgpyNt_aukmE6-"/>
+<div>
+<h2 class="text-xl font-bold">Sarah Chen</h2>
+<p class="text-subtle-light dark:text-subtle-dark">Mentor</p>
+</div>
+</div>
+<div class="space-y-4">
+<h3 class="text-lg font-bold">Available Slots</h3>
+<div class="bg-white dark:bg-background-dark p-4 rounded-lg border border-border-light dark:border-border-dark">
+<div class="flex items-center justify-between mb-4">
+<button class="p-2 rounded-full hover:bg-primary/10 dark:hover:bg-primary/20">
+<span class="material-symbols-outlined text-foreground-light dark:text-foreground-dark">chevron_left</span>
+</button>
+<p class="font-semibold">July 2024</p>
+<button class="p-2 rounded-full hover:bg-primary/10 dark:hover:bg-primary/20">
+<span class="material-symbols-outlined text-foreground-light dark:text-foreground-dark">chevron_right</span>
+</button>
+</div>
+<div class="grid grid-cols-7 text-center text-sm">
+<div class="font-semibold text-subtle-light dark:text-subtle-dark py-2">S</div>
+<div class="font-semibold text-subtle-light dark:text-subtle-dark py-2">M</div>
+<div class="font-semibold text-subtle-light dark:text-subtle-dark py-2">T</div>
+<div class="font-semibold text-subtle-light dark:text-subtle-dark py-2">W</div>
+<div class="font-semibold text-subtle-light dark:text-subtle-dark py-2">T</div>
+<div class="font-semibold text-subtle-light dark:text-subtle-dark py-2">F</div>
+<div class="font-semibold text-subtle-light dark:text-subtle-dark py-2">S</div>
+<div class="col-start-3 py-2"></div>
+<div class="py-2"><button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary/10 dark:hover:bg-primary/20">1</button></div>
+<div class="py-2"><button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary/10 dark:hover:bg-primary/20">2</button></div>
+<div class="py-2"><button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary/10 dark:hover:bg-primary/20">3</button></div>
+<div class="py-2"><button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary/10 dark:hover:bg-primary/20">4</button></div>
+<div class="py-2"><button class="w-10 h-10 flex items-center justify-center rounded-full bg-primary text-white">5</button></div>
+<div class="py-2"><button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary/10 dark:hover:bg-primary/20">6</button></div>
+<div class="py-2"><button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary/10 dark:hover:bg-primary/20">7</button></div>
+<div class="py-2"><button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary/10 dark:hover:bg-primary/20">8</button></div>
+<div class="py-2"><button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary/10 dark:hover:bg-primary/20">9</button></div>
+<div class="py-2"><button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary/10 dark:hover:bg-primary/20">10</button></div>
+<div class="py-2"><button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary/10 dark:hover:bg-primary/20">11</button></div>
+<div class="py-2"><button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary/10 dark:hover:bg-primary/20">12</button></div>
+<div class="py-2"><button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary/10 dark:hover:bg-primary/20">13</button></div>
+<div class="py-2"><button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary/10 dark:hover:bg-primary/20">14</button></div>
+<div class="py-2"><button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary/10 dark:hover:bg-primary/20">15</button></div>
+<div class="py-2"><button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary/10 dark:hover:bg-primary/20">16</button></div>
+<div class="py-2"><button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary/10 dark:hover:bg-primary/20">17</button></div>
+<div class="py-2"><button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary/10 dark:hover:bg-primary/20">18</button></div>
+<div class="py-2"><button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary/10 dark:hover:bg-primary/20">19</button></div>
+<div class="py-2"><button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary/10 dark:hover:bg-primary/20">20</button></div>
+<div class="py-2"><button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary/10 dark:hover:bg-primary/20">21</button></div>
+<div class="py-2"><button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary/10 dark:hover:bg-primary/20">22</button></div>
+<div class="py-2"><button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary/10 dark:hover:bg-primary/20">23</button></div>
+<div class="py-2"><button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary/10 dark:hover:bg-primary/20">24</button></div>
+<div class="py-2"><button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary/10 dark:hover:bg-primary/20">25</button></div>
+<div class="py-2"><button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary/10 dark:hover:bg-primary/20">26</button></div>
+<div class="py-2"><button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary/10 dark:hover:bg-primary/20">27</button></div>
+<div class="py-2"><button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary/10 dark:hover:bg-primary/20">28</button></div>
+<div class="py-2"><button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary/10 dark:hover:bg-primary/20">29</button></div>
+<div class="py-2"><button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary/10 dark:hover:bg-primary/20">30</button></div>
+<div class="py-2"><button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary/10 dark:hover:bg-primary/20">31</button></div>
+</div>
+</div>
+</div>
+<div class="space-y-3">
+<h3 class="text-lg font-bold">Select Time</h3>
+<div class="flex flex-wrap gap-2">
+<button class="px-4 py-2 rounded-lg bg-primary/10 dark:bg-primary/20 text-primary font-semibold">9:00 AM</button>
+<button class="px-4 py-2 rounded-lg bg-background-light dark:bg-border-dark border border-border-light dark:border-border-dark hover:bg-primary/10 dark:hover:bg-primary/20">10:00 AM</button>
+<button class="px-4 py-2 rounded-lg bg-background-light dark:bg-border-dark border border-border-light dark:border-border-dark hover:bg-primary/10 dark:hover:bg-primary/20">11:00 AM</button>
+<button class="px-4 py-2 rounded-lg bg-background-light dark:bg-border-dark border border-border-light dark:border-border-dark hover:bg-primary/10 dark:hover:bg-primary/20">1:00 PM</button>
+<button class="px-4 py-2 rounded-lg bg-background-light dark:bg-border-dark border border-border-light dark:border-border-dark hover:bg-primary/10 dark:hover:bg-primary/20">2:00 PM</button>
+<button class="px-4 py-2 rounded-lg bg-background-light dark:bg-border-dark border border-border-light dark:border-border-dark hover:bg-primary/10 dark:hover:bg-primary/20">3:00 PM</button>
+</div>
+</div>
+<div class="space-y-3">
+<h3 class="text-lg font-bold">Session Details</h3>
+<div class="bg-white dark:bg-background-dark p-4 rounded-lg border border-border-light dark:border-border-dark space-y-4">
+<div>
+<p class="font-semibold">Date &amp; Time</p>
+<p class="text-subtle-light dark:text-subtle-dark">July 5, 2024, 9:00 AM</p>
+</div>
+<div>
+<p class="font-semibold">Location</p>
+<p class="text-subtle-light dark:text-subtle-dark">Online</p>
+</div>
+<div>
+<p class="font-semibold">Duration</p>
+<p class="text-subtle-light dark:text-subtle-dark">30 minutes</p>
+</div>
+</div>
+</div>
+</main>
+<div class="sticky bottom-0 bg-background-light dark:bg-background-dark py-4 px-4 space-y-4 border-t border-border-light dark:border-border-dark">
+<button class="w-full bg-primary text-white font-bold py-3 px-5 rounded-lg text-center">Book Session</button>
+<nav class="flex justify-around">
+<a class="flex flex-col items-center gap-1 text-subtle-light dark:text-subtle-dark" href="#">
+<span class="material-symbols-outlined">search</span>
+<span class="text-xs">Search</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">calendar_month</span>
+<span class="text-xs font-bold">My Sessions</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-subtle-light dark:text-subtle-dark" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="text-xs">Profile</span>
+</a>
+</nav>
+</div>
+</div>
+
+</body></html>

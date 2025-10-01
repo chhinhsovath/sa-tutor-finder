@@ -1,0 +1,61 @@
+{
+    "project": "SA Tutor Finder",
+    "stack": {
+      "frontend": "Flutter (mobile client, calls REST API)",
+      "backend": "Next.js 14 App Router (API routes deployed on Vercel)",
+      "database": "PostgreSQL"
+    },
+    "purpose": "Allow mentors to register with name, English level, weekly availability, and let learners filter mentors by day/time/level.",
+    "entities": {
+      "Mentor": {
+        "id": "uuid (primary key)",
+        "name": "string",
+        "email": "string unique",
+        "password_hash": "string (bcrypt)",
+        "english_level": "enum(A1, A2, B1, B2, C1, C2)",
+        "contact": "string (email/phone/telegram link)",
+        "timezone": "string default 'Asia/Phnom_Penh'",
+        "status": "enum(active,inactive) default active",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "AvailabilitySlot": {
+        "id": "uuid (primary key)",
+        "mentor_id": "uuid references Mentor(id)",
+        "day_of_week": "int (1=Mon ... 7=Sun)",
+        "start_time": "time",
+        "end_time": "time"
+      }
+    },
+    "api_routes": {
+      "/api/auth/signup": "POST – create mentor account",
+      "/api/auth/login": "POST – login with email/password, return JWT",
+      "/api/mentors": "GET – list mentors with filters ?day=1&from=18:00&to=20:00&level=B1",
+      "/api/mentors/[id]": "GET – mentor detail",
+      "/api/mentors/me": "PATCH – update profile (auth required)",
+      "/api/mentors/me/availability": {
+        "POST": "replace weekly slots (auth required)",
+        "GET": "list own slots"
+      },
+      "/api/admin/mentors/[id]/status": "PATCH – admin only, set active/inactive"
+    },
+    "db_schema_postgresql": [
+      "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";",
+      "CREATE TABLE mentors (id UUID PRIMARY KEY DEFAULT uuid_generate_v4(), name VARCHAR(100) NOT NULL, email VARCHAR(100) UNIQUE NOT NULL, password_hash TEXT NOT NULL, english_level VARCHAR(5) NOT NULL, contact VARCHAR(255), timezone VARCHAR(50) DEFAULT 'Asia/Phnom_Penh', status VARCHAR(10) DEFAULT 'active', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);",
+      "CREATE TABLE availability_slots (id UUID PRIMARY KEY DEFAULT uuid_generate_v4(), mentor_id UUID REFERENCES mentors(id) ON DELETE CASCADE, day_of_week INT NOT NULL, start_time TIME NOT NULL, end_time TIME NOT NULL);"
+    ],
+    "search_logic": "SQL: SELECT * FROM mentors m JOIN availability_slots s ON m.id = s.mentor_id WHERE s.day_of_week = $1 AND s.start_time < $to AND s.end_time > $from AND (m.english_level = $level OR $level IS NULL) AND m.status = 'active';",
+    "flutter_integration": {
+      "http_client": "Use dio or http package",
+      "endpoints": "Point to deployed Next.js API e.g. https://tutor.openplp.com/api",
+      "auth_storage": "Store JWT in secure storage"
+    },
+    "acceptance_criteria": [
+      "Mentors can sign up, set profile & availability",
+      "Learners can filter mentors by day/time/level",
+      "JWT-based auth works",
+      "Database schema works with Postgres",
+      "API deploys cleanly on Vercel"
+    ]
+  }
+  

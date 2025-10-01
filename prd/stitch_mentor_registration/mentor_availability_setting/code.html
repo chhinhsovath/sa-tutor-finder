@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Set Availability</title>
+<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+<link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter:wght@400;500;700;900" onload="this.rel='stylesheet'" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1193d4",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101c22",
+                        "content-light": "#111618",
+                        "content-dark": "#e3e9ec",
+                        "subtle-light": "#617c89",
+                        "subtle-dark": "#a0b1b9"
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "0.75rem",
+                        "xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-content-light dark:text-content-dark">
+<div class="flex flex-col h-screen">
+<header class="flex items-center justify-between p-4 border-b border-background-light dark:border-background-dark/10 bg-background-light dark:bg-background-dark sticky top-0">
+<button class="text-content-light dark:text-content-dark">
+<svg fill="currentColor" height="24" viewBox="0 0 256 256" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z"></path>
+</svg>
+</button>
+<h1 class="text-lg font-bold text-center flex-1">Set Availability</h1>
+<div class="w-6"></div>
+</header>
+<main class="flex-1 overflow-y-auto">
+<div class="p-4 space-y-4">
+<p class="text-subtle-light dark:text-subtle-dark text-center">Select the days and times you're available to mentor this week.</p>
+<div class="space-y-2">
+<div class="bg-background-light dark:bg-background-dark/50 rounded-lg p-4 flex items-center justify-between">
+<div>
+<p class="font-medium">Monday</p>
+<p class="text-sm text-subtle-light dark:text-subtle-dark">9:00 AM - 5:00 PM</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="bg-background-light dark:bg-background-dark/50 rounded-lg p-4 flex items-center justify-between">
+<div>
+<p class="font-medium">Tuesday</p>
+<p class="text-sm text-subtle-light dark:text-subtle-dark">Not available</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="bg-background-light dark:bg-background-dark/50 rounded-lg p-4 flex items-center justify-between">
+<div>
+<p class="font-medium">Wednesday</p>
+<p class="text-sm text-subtle-light dark:text-subtle-dark">9:00 AM - 5:00 PM</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="bg-background-light dark:bg-background-dark/50 rounded-lg p-4 flex items-center justify-between">
+<div>
+<p class="font-medium">Thursday</p>
+<p class="text-sm text-subtle-light dark:text-subtle-dark">9:00 AM - 5:00 PM</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="bg-background-light dark:bg-background-dark/50 rounded-lg p-4 flex items-center justify-between">
+<div>
+<p class="font-medium">Friday</p>
+<p class="text-sm text-subtle-light dark:text-subtle-dark">9:00 AM - 1:00 PM</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="bg-background-light dark:bg-background-dark/50 rounded-lg p-4 flex items-center justify-between">
+<div>
+<p class="font-medium">Saturday</p>
+<p class="text-sm text-subtle-light dark:text-subtle-dark">Not available</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="bg-background-light dark:bg-background-dark/50 rounded-lg p-4 flex items-center justify-between">
+<div>
+<p class="font-medium">Sunday</p>
+<p class="text-sm text-subtle-light dark:text-subtle-dark">Not available</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+</div>
+</main>
+<footer class="p-4 bg-background-light dark:bg-background-dark border-t border-background-light dark:border-background-dark/10">
+<button class="w-full bg-primary text-white font-bold py-3 px-5 rounded-lg text-center">
+                Save Availability
+            </button>
+</footer>
+</div>
+
+</body></html>
