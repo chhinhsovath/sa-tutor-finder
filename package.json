@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "next dev",
-    "build": "flutter build web --release && cp -r build/web/* public/flutter/ && next build",
-    "build:next": "next build",
+    "build": "next build",
+    "build:flutter": "flutter build web --release && cp -r build/web/* public/flutter/",
+    "build:all": "npm run build:flutter && npm run build",
     "start": "next start",
     "lint": "next lint"
   },
