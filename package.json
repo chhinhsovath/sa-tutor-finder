@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "build:flutter": "flutter build web --release && cp -r build/web/* public/flutter/",
+    "build:flutter": "flutter build web --release --base-href /app/ && rm -rf public/app && mkdir -p public/app && cp -r build/web/* public/app/",
     "build:all": "npm run build:flutter && npm run build",
     "start": "next start",
     "lint": "next lint"

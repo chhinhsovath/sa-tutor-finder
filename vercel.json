@@ -1,17 +1,7 @@
 {
-  "rewrites": [
-    {
-      "source": "/app",
-      "destination": "/flutter/index.html"
-    },
-    {
-      "source": "/app/:path*",
-      "destination": "/flutter/:path*"
-    }
-  ],
   "headers": [
     {
-      "source": "/flutter/(.*)",
+      "source": "/app/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
