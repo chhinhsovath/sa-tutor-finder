@@ -63,7 +63,10 @@ class _ProfileEditingScreenState extends State<ProfileEditingScreen> {
             backgroundColor: Colors.green,
           ),
         );
-        Navigator.pop(context);
+        // Only pop if we can - profile screen is usually in a tab, not pushed
+        if (Navigator.of(context).canPop()) {
+          Navigator.of(context).pop();
+        }
       }
     } catch (e) {
       if (mounted) {
@@ -84,7 +87,11 @@ class _ProfileEditingScreenState extends State<ProfileEditingScreen> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () {
+            if (Navigator.of(context).canPop()) {
+              Navigator.of(context).pop();
+            }
+          },
         ),
         title: const Text('Edit Profile'),
         centerTitle: true,
