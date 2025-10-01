@@ -1,9 +1,10 @@
 class ApiConfig {
   // Production API URL - default
-  static const String baseUrl = 'https://tutor.openplp.com/api';
+  static const String baseUrl = 'https://apitutor.openplp.com/api';
 
   // Use this for local development
   // static const String baseUrl = 'http://localhost:3000/api';
+  // static const String baseUrl = 'http://10.0.2.2:3000/api'; // For Android emulator
 
   // Auth endpoints
   static const String signup = '/auth/signup';
