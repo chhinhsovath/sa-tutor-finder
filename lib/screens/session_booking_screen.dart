@@ -263,15 +263,6 @@ class _SessionBookingScreenState extends State<SessionBookingScreen> {
                       child: const Text('Book Session'),
                     ),
                   ),
-                  const SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      _buildNavItem(Icons.search, 'Search', false, theme),
-                      _buildNavItem(Icons.calendar_month, 'My Sessions', true, theme),
-                      _buildNavItem(Icons.person, 'Profile', false, theme),
-                    ],
-                  ),
                 ],
               ),
             ),
@@ -293,25 +284,6 @@ class _SessionBookingScreenState extends State<SessionBookingScreen> {
           value,
           style: theme.textTheme.bodyMedium?.copyWith(
             color: theme.textTheme.bodySmall?.color,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildNavItem(IconData icon, String label, bool isActive, ThemeData theme) {
-    final color = isActive ? theme.colorScheme.primary : theme.textTheme.bodySmall?.color;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, color: color, size: 24),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: isActive ? FontWeight.bold : FontWeight.w500,
-            color: color,
           ),
         ),
       ],

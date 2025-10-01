@@ -163,7 +163,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: _buildBottomNav(theme),
     );
   }
 
@@ -297,53 +296,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             }
             return null;
           },
-        ),
-      ],
-    );
-  }
-
-  Widget _buildBottomNav(ThemeData theme) {
-    return Container(
-      decoration: BoxDecoration(
-        color: theme.cardColor,
-        border: Border(
-          top: BorderSide(
-            color: theme.brightness == Brightness.light
-                ? const Color(0xFFE5E7EB)
-                : const Color(0xFF374151),
-          ),
-        ),
-      ),
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildNavItem(Icons.search, 'Search', false, theme),
-              _buildNavItem(Icons.group, 'Mentors', true, theme),
-              _buildNavItem(Icons.person, 'Profile', false, theme),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildNavItem(IconData icon, String label, bool isActive, ThemeData theme) {
-    final color = isActive ? theme.colorScheme.primary : theme.textTheme.bodySmall?.color;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, color: color, size: 24),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-            color: color,
-          ),
         ),
       ],
     );

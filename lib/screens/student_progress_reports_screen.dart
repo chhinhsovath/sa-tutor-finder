@@ -44,7 +44,6 @@ class StudentProgressReportsScreen extends StatelessWidget {
               ),
             ),
           ),
-          _buildBottomNav(theme, 1),
         ],
       ),
     );
@@ -112,53 +111,6 @@ class StudentProgressReportsScreen extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildBottomNav(ThemeData theme, int currentIndex) {
-    return Container(
-      decoration: BoxDecoration(
-        color: theme.cardColor,
-        border: Border(
-          top: BorderSide(
-            color: theme.brightness == Brightness.light
-                ? const Color(0xFFE5E7EB)
-                : const Color(0xFF374151),
-          ),
-        ),
-      ),
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildNavItem(Icons.groups, 'Students', currentIndex == 0, theme),
-              _buildNavItem(Icons.bar_chart, 'Reports', currentIndex == 1, theme),
-              _buildNavItem(Icons.person, 'Profile', currentIndex == 2, theme),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildNavItem(IconData icon, String label, bool isActive, ThemeData theme) {
-    final color = isActive ? theme.colorScheme.primary : theme.textTheme.bodySmall?.color;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, color: color, size: 24),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: isActive ? FontWeight.bold : FontWeight.w500,
-            color: color,
-          ),
-        ),
-      ],
     );
   }
 }
