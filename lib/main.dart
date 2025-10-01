@@ -30,24 +30,8 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class AuthChecker extends StatefulWidget {
+class AuthChecker extends StatelessWidget {
   const AuthChecker({super.key});
-
-  @override
-  State<AuthChecker> createState() => _AuthCheckerState();
-}
-
-class _AuthCheckerState extends State<AuthChecker> {
-  @override
-  void initState() {
-    super.initState();
-    _checkAuth();
-  }
-
-  Future<void> _checkAuth() async {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    await authProvider.restoreSession();
-  }
 
   @override
   Widget build(BuildContext context) {

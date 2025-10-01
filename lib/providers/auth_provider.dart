@@ -6,13 +6,24 @@ class AuthProvider with ChangeNotifier {
   final ApiService _apiService = ApiService();
 
   Mentor? _currentMentor;
-  bool _isLoading = false;
+  bool _isLoading = true; // Start with loading true
   String? _error;
 
   Mentor? get currentMentor => _currentMentor;
   bool get isLoading => _isLoading;
   String? get error => _error;
   bool get isAuthenticated => _currentMentor != null;
+
+  AuthProvider() {
+    // CRITICAL: Initialize auth state on app start to prevent redirect to login on refresh
+    _initializeAuth();
+  }
+
+  // Initialize auth state
+  Future<void> _initializeAuth() async {
+    // Try to restore saved session
+    await restoreSession();
+  }
 
   Future<bool> signup({
     required String name,
