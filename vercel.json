@@ -1,0 +1,23 @@
+{
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/flutter/index.html"
+    },
+    {
+      "source": "/:path((?!api|flutter).*)",
+      "destination": "/flutter/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/flutter/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    }
+  ]
+}
