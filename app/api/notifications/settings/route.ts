@@ -16,8 +16,15 @@ export async function GET(request: NextRequest) {
     }
 
     const decoded = verifyToken(token);
-    const userType = decoded.mentor_id ? 'mentor' : decoded.student_id ? 'student' : 'counselor';
-    const userId = decoded.mentor_id || decoded.student_id || decoded.counselor_id;
+    if (!decoded) {
+      return NextResponse.json(
+        { error: { message: 'Invalid or expired token', code: 'UNAUTHORIZED' } },
+        { status: 401 }
+      );
+    }
+
+    const userType = 'mentor';
+    const userId = decoded.mentor_id;
 
     const result = await pool.query(
       'SELECT * FROM notification_settings WHERE user_id = $1 AND user_type = $2',
@@ -63,6 +70,13 @@ export async function PATCH(request: NextRequest) {
     }
 
     const decoded = verifyToken(token);
+    if (!decoded) {
+      return NextResponse.json(
+        { error: { message: 'Invalid or expired token', code: 'UNAUTHORIZED' } },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
     const {
       email_notifications,
@@ -73,8 +87,8 @@ export async function PATCH(request: NextRequest) {
       review_notifications
     } = body;
 
-    const userType = decoded.mentor_id ? 'mentor' : decoded.student_id ? 'student' : 'counselor';
-    const userId = decoded.mentor_id || decoded.student_id || decoded.counselor_id;
+    const userType = 'mentor';
+    const userId = decoded.mentor_id;
 
     const updates: string[] = [];
     const values: any[] = [];

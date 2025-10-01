@@ -71,13 +71,20 @@ export async function PATCH(
     }
 
     const decoded = verifyToken(token);
+    if (!decoded) {
+      return NextResponse.json(
+        { error: { message: 'Invalid or expired token', code: 'UNAUTHORIZED' } },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
     const { status, session_date, start_time, end_time, notes } = body;
 
-    // Verify session belongs to user
+    // Verify session belongs to user (mentor only system)
     const sessionCheck = await pool.query(
-      'SELECT * FROM sessions WHERE id = $1 AND (student_id = $2 OR mentor_id = $3)',
-      [id, decoded.student_id || null, decoded.mentor_id || null]
+      'SELECT * FROM sessions WHERE id = $1 AND mentor_id = $2',
+      [id, decoded.mentor_id]
     );
 
     if (sessionCheck.rows.length === 0) {
@@ -160,11 +167,17 @@ export async function DELETE(
     }
 
     const decoded = verifyToken(token);
+    if (!decoded) {
+      return NextResponse.json(
+        { error: { message: 'Invalid or expired token', code: 'UNAUTHORIZED' } },
+        { status: 401 }
+      );
+    }
 
-    // Verify session belongs to user
+    // Verify session belongs to user (mentor only system)
     const sessionCheck = await pool.query(
-      'SELECT * FROM sessions WHERE id = $1 AND (student_id = $2 OR mentor_id = $3)',
-      [id, decoded.student_id || null, decoded.mentor_id || null]
+      'SELECT * FROM sessions WHERE id = $1 AND mentor_id = $2',
+      [id, decoded.mentor_id]
     );
 
     if (sessionCheck.rows.length === 0) {

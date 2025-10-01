@@ -16,6 +16,13 @@ export async function GET(request: NextRequest) {
     }
 
     const decoded = verifyToken(token);
+    if (!decoded) {
+      return NextResponse.json(
+        { error: { message: 'Invalid or expired token', code: 'UNAUTHORIZED' } },
+        { status: 401 }
+      );
+    }
+
     const { searchParams } = new URL(request.url);
     const otherUserId = searchParams.get('other_user_id');
     const otherUserType = searchParams.get('other_user_type'); // 'student', 'mentor', 'counselor'
@@ -32,9 +39,9 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Determine current user type
-    const currentUserType = decoded.mentor_id ? 'mentor' : decoded.student_id ? 'student' : 'counselor';
-    const currentUserId = decoded.mentor_id || decoded.student_id || decoded.counselor_id;
+    // Determine current user type (currently mentor-only system)
+    const currentUserType = 'mentor';
+    const currentUserId = decoded.mentor_id;
 
     const result = await pool.query(
       `SELECT * FROM messages
@@ -85,6 +92,13 @@ export async function POST(request: NextRequest) {
     }
 
     const decoded = verifyToken(token);
+    if (!decoded) {
+      return NextResponse.json(
+        { error: { message: 'Invalid or expired token', code: 'UNAUTHORIZED' } },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
     const { receiver_id, receiver_type, message } = body;
 
@@ -100,9 +114,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Determine current user type
-    const senderType = decoded.mentor_id ? 'mentor' : decoded.student_id ? 'student' : 'counselor';
-    const senderId = decoded.mentor_id || decoded.student_id || decoded.counselor_id;
+    // Determine current user type (currently mentor-only system)
+    const senderType = 'mentor';
+    const senderId = decoded.mentor_id;
 
     const result = await pool.query(
       `INSERT INTO messages (sender_id, sender_type, receiver_id, receiver_type, message, is_read)

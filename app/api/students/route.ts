@@ -16,17 +16,16 @@ export async function GET(request: NextRequest) {
     }
 
     const decoded = verifyToken(token);
+    if (!decoded) {
+      return NextResponse.json(
+        { error: { message: 'Invalid or expired token', code: 'UNAUTHORIZED' } },
+        { status: 401 }
+      );
+    }
+
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status');
     const gradeLevel = searchParams.get('grade_level');
-
-    // Only mentors and counselors can list students
-    if (!decoded.mentor_id && !decoded.counselor_id) {
-      return NextResponse.json(
-        { error: { message: 'Forbidden: Only mentors and counselors can access', code: 'FORBIDDEN' } },
-        { status: 403 }
-      );
-    }
 
     let query = `
       SELECT s.id, s.name, s.email, s.grade_level, s.contact, s.status, s.created_at

@@ -70,6 +70,13 @@ export async function POST(
     }
 
     const decoded = verifyToken(token);
+    if (!decoded) {
+      return NextResponse.json(
+        { error: { message: 'Invalid or expired token', code: 'UNAUTHORIZED' } },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
     const { progress_notes, skills_improved, areas_for_improvement } = body;
 
@@ -85,16 +92,9 @@ export async function POST(
       );
     }
 
-    // Determine recorder type
-    const recorderType = decoded.mentor_id ? 'mentor' : 'counselor';
-    const recorderId = decoded.mentor_id || decoded.counselor_id;
-
-    if (!recorderId) {
-      return NextResponse.json(
-        { error: { message: 'Forbidden: Only mentors and counselors can add progress', code: 'FORBIDDEN' } },
-        { status: 403 }
-      );
-    }
+    // Current system only supports mentor auth
+    const recorderType = 'mentor';
+    const recorderId = decoded.mentor_id;
 
     const result = await pool.query(
       `INSERT INTO student_progress (student_id, recorder_id, recorder_type, progress_notes, skills_improved, areas_for_improvement)

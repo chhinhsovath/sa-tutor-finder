@@ -16,9 +16,15 @@ export async function GET(request: NextRequest) {
     }
 
     const decoded = verifyToken(token);
+    if (!decoded) {
+      return NextResponse.json(
+        { error: { message: 'Invalid or expired token', code: 'UNAUTHORIZED' } },
+        { status: 401 }
+      );
+    }
+
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status');
-    const userType = searchParams.get('user_type'); // 'student' or 'mentor'
 
     let query = `
       SELECT s.*,
@@ -27,17 +33,9 @@ export async function GET(request: NextRequest) {
       FROM sessions s
       JOIN mentors m ON s.mentor_id = m.id
       JOIN students st ON s.student_id = st.id
-      WHERE 1=1
+      WHERE s.mentor_id = $1
     `;
-    const params: any[] = [];
-
-    if (userType === 'mentor') {
-      params.push(decoded.mentor_id);
-      query += ` AND s.mentor_id = $${params.length}`;
-    } else if (userType === 'student') {
-      params.push(decoded.student_id);
-      query += ` AND s.student_id = $${params.length}`;
-    }
+    const params: any[] = [decoded.mentor_id];
 
     if (status) {
       params.push(status);
@@ -79,80 +77,24 @@ export async function POST(request: NextRequest) {
     }
 
     const decoded = verifyToken(token);
-    const body = await request.json();
-    const { mentor_id, session_date, start_time, end_time, notes } = body;
-
-    if (!mentor_id || !session_date || !start_time || !end_time) {
+    if (!decoded) {
       return NextResponse.json(
-        {
-          error: {
-            message: 'Missing required fields: mentor_id, session_date, start_time, end_time',
-            code: 'VALIDATION_ERROR'
-          }
-        },
-        { status: 400 }
+        { error: { message: 'Invalid or expired token', code: 'UNAUTHORIZED' } },
+        { status: 401 }
       );
     }
 
-    // Check if mentor is available at that time
-    const availabilityCheck = await pool.query(
-      `SELECT * FROM availability_slots
-       WHERE mentor_id = $1
-       AND day_of_week = EXTRACT(ISODOW FROM $2::DATE)
-       AND start_time <= $3::TIME
-       AND end_time >= $4::TIME`,
-      [mentor_id, session_date, start_time, end_time]
+    // This route requires student authentication to book sessions
+    // Current system only supports mentor auth, so return error
+    return NextResponse.json(
+      {
+        error: {
+          message: 'Session booking requires student authentication (not yet implemented)',
+          code: 'NOT_IMPLEMENTED'
+        }
+      },
+      { status: 501 }
     );
-
-    if (availabilityCheck.rows.length === 0) {
-      return NextResponse.json(
-        {
-          error: {
-            message: 'Mentor is not available at the selected time',
-            code: 'MENTOR_NOT_AVAILABLE'
-          }
-        },
-        { status: 400 }
-      );
-    }
-
-    // Check for conflicting sessions
-    const conflictCheck = await pool.query(
-      `SELECT * FROM sessions
-       WHERE mentor_id = $1
-       AND session_date = $2
-       AND status != 'cancelled'
-       AND (
-         (start_time <= $3::TIME AND end_time > $3::TIME) OR
-         (start_time < $4::TIME AND end_time >= $4::TIME) OR
-         (start_time >= $3::TIME AND end_time <= $4::TIME)
-       )`,
-      [mentor_id, session_date, start_time, end_time]
-    );
-
-    if (conflictCheck.rows.length > 0) {
-      return NextResponse.json(
-        {
-          error: {
-            message: 'This time slot is already booked',
-            code: 'TIME_SLOT_CONFLICT'
-          }
-        },
-        { status: 400 }
-      );
-    }
-
-    const result = await pool.query(
-      `INSERT INTO sessions (student_id, mentor_id, session_date, start_time, end_time, notes, status)
-       VALUES ($1, $2, $3, $4, $5, $6, 'scheduled')
-       RETURNING *`,
-      [decoded.student_id, mentor_id, session_date, start_time, end_time, notes || null]
-    );
-
-    return NextResponse.json({
-      session: result.rows[0],
-      message: 'Session booked successfully'
-    }, { status: 201 });
   } catch (error: any) {
     console.error('Create session error:', error);
     return NextResponse.json(

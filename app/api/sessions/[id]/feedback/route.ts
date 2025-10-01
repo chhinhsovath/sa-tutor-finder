@@ -20,6 +20,13 @@ export async function POST(
     }
 
     const decoded = verifyToken(token);
+    if (!decoded) {
+      return NextResponse.json(
+        { error: { message: 'Invalid or expired token', code: 'UNAUTHORIZED' } },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
     const { rating, student_performance, notes } = body;
 

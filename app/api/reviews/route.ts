@@ -16,6 +16,13 @@ export async function POST(request: NextRequest) {
     }
 
     const decoded = verifyToken(token);
+    if (!decoded) {
+      return NextResponse.json(
+        { error: { message: 'Invalid or expired token', code: 'UNAUTHORIZED' } },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
     const { mentor_id, session_id, rating, comment } = body;
 
@@ -43,68 +50,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // If session_id provided, verify it belongs to student and mentor
-    if (session_id) {
-      const sessionCheck = await pool.query(
-        'SELECT * FROM sessions WHERE id = $1 AND student_id = $2 AND mentor_id = $3',
-        [session_id, decoded.student_id, mentor_id]
-      );
-
-      if (sessionCheck.rows.length === 0) {
-        return NextResponse.json(
-          {
-            error: {
-              message: 'Session not found or does not match mentor',
-              code: 'INVALID_SESSION'
-            }
-          },
-          { status: 400 }
-        );
-      }
-
-      // Check if review already exists for this session
-      const existingReview = await pool.query(
-        'SELECT * FROM reviews WHERE session_id = $1 AND student_id = $2',
-        [session_id, decoded.student_id]
-      );
-
-      if (existingReview.rows.length > 0) {
-        return NextResponse.json(
-          {
-            error: {
-              message: 'You have already reviewed this session',
-              code: 'REVIEW_EXISTS'
-            }
-          },
-          { status: 400 }
-        );
-      }
-    }
-
-    const result = await pool.query(
-      `INSERT INTO reviews (student_id, mentor_id, session_id, rating, comment)
-       VALUES ($1, $2, $3, $4, $5)
-       RETURNING *`,
-      [decoded.student_id, mentor_id, session_id || null, rating, comment || null]
+    // This route requires student authentication
+    // Current system only supports mentor auth, so return error
+    return NextResponse.json(
+      {
+        error: {
+          message: 'Review submission requires student authentication (not yet implemented)',
+          code: 'NOT_IMPLEMENTED'
+        }
+      },
+      { status: 501 }
     );
-
-    return NextResponse.json({
-      review: result.rows[0],
-      message: 'Review submitted successfully'
-    }, { status: 201 });
   } catch (error: any) {
     console.error('Submit review error:', error);
-    if (error.code === '23505') { // Unique violation
-      return NextResponse.json(
-        {
-          error: {
-            message: 'You have already reviewed this session',
-            code: 'REVIEW_EXISTS'
-          }
-        },
-        { status: 400 }
-      );
-    }
     return NextResponse.json(
       {
         error: {

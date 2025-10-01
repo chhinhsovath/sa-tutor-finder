@@ -16,11 +16,18 @@ export async function GET(request: NextRequest) {
     }
 
     const decoded = verifyToken(token);
+    if (!decoded) {
+      return NextResponse.json(
+        { error: { message: 'Invalid or expired token', code: 'UNAUTHORIZED' } },
+        { status: 401 }
+      );
+    }
+
     const { searchParams } = new URL(request.url);
     const unreadOnly = searchParams.get('unread_only') === 'true';
 
-    const userType = decoded.mentor_id ? 'mentor' : decoded.student_id ? 'student' : 'counselor';
-    const userId = decoded.mentor_id || decoded.student_id || decoded.counselor_id;
+    const userType = 'mentor';
+    const userId = decoded.mentor_id;
 
     let query = `
       SELECT * FROM notifications
@@ -67,11 +74,18 @@ export async function PATCH(request: NextRequest) {
     }
 
     const decoded = verifyToken(token);
+    if (!decoded) {
+      return NextResponse.json(
+        { error: { message: 'Invalid or expired token', code: 'UNAUTHORIZED' } },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
     const { notification_ids, mark_all } = body;
 
-    const userType = decoded.mentor_id ? 'mentor' : decoded.student_id ? 'student' : 'counselor';
-    const userId = decoded.mentor_id || decoded.student_id || decoded.counselor_id;
+    const userType = 'mentor';
+    const userId = decoded.mentor_id;
 
     if (mark_all) {
       await pool.query(
