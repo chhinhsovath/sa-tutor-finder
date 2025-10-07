@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import pool from '@/lib/db';
+import prisma from '@/lib/prisma';
 import { verifyToken } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
@@ -23,63 +23,96 @@ export async function PATCH(
     // TODO: Add admin role check
 
     const body = await request.json();
-    const { status, grade_level, name, email, contact } = body;
+    const { name, email, phone_number, english_level, learning_goals, timezone, status } = body;
 
-    const updates: string[] = [];
-    const values: any[] = [];
-    let paramCount = 1;
+    const updateData: any = {};
 
-    if (status) {
-      updates.push(`status = $${paramCount++}`);
-      values.push(status);
-    }
-    if (grade_level) {
-      updates.push(`grade_level = $${paramCount++}`);
-      values.push(grade_level);
-    }
-    if (name) {
-      updates.push(`name = $${paramCount++}`);
-      values.push(name);
-    }
-    if (email) {
-      updates.push(`email = $${paramCount++}`);
-      values.push(email);
-    }
-    if (contact !== undefined) {
-      updates.push(`contact = $${paramCount++}`);
-      values.push(contact);
-    }
+    if (name !== undefined) updateData.name = name;
+    if (email !== undefined) updateData.email = email;
+    if (phone_number !== undefined) updateData.phone_number = phone_number;
+    if (english_level !== undefined) updateData.english_level = english_level;
+    if (learning_goals !== undefined) updateData.learning_goals = learning_goals;
+    if (timezone !== undefined) updateData.timezone = timezone;
+    if (status !== undefined) updateData.status = status;
 
-    if (updates.length === 0) {
+    if (Object.keys(updateData).length === 0) {
       return NextResponse.json(
         { error: { message: 'No fields to update', code: 'VALIDATION_ERROR' } },
         { status: 400 }
       );
     }
 
-    values.push(id);
-    const result = await pool.query(
-      `UPDATE students SET ${updates.join(', ')} WHERE id = $${paramCount} RETURNING *`,
-      values
-    );
+    const student = await prisma.students.update({
+      where: { id },
+      data: updateData
+    });
 
-    if (result.rows.length === 0) {
+    return NextResponse.json({
+      student,
+      message: 'Student updated successfully'
+    });
+  } catch (error: any) {
+    console.error('Admin update student error:', error);
+
+    if (error.code === 'P2025') {
       return NextResponse.json(
         { error: { message: 'Student not found', code: 'STUDENT_NOT_FOUND' } },
         { status: 404 }
       );
     }
 
-    return NextResponse.json({
-      student: result.rows[0],
-      message: 'Student updated successfully'
-    });
-  } catch (error: any) {
-    console.error('Admin update student error:', error);
     return NextResponse.json(
       {
         error: {
           message: 'Internal server error while updating student',
+          code: 'INTERNAL_ERROR',
+          meta: { error: error.message }
+        }
+      },
+      { status: 500 }
+    );
+  }
+}
+
+// DELETE /api/admin/students/[id] - Delete student (admin only)
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    const token = request.headers.get('authorization')?.replace('Bearer ', '');
+    if (!token) {
+      return NextResponse.json(
+        { error: { message: 'Authorization token required', code: 'UNAUTHORIZED' } },
+        { status: 401 }
+      );
+    }
+
+    verifyToken(token);
+    // TODO: Add admin role check
+
+    await prisma.students.delete({
+      where: { id }
+    });
+
+    return NextResponse.json({
+      message: 'Student deleted successfully'
+    });
+  } catch (error: any) {
+    console.error('Admin delete student error:', error);
+
+    if (error.code === 'P2025') {
+      return NextResponse.json(
+        { error: { message: 'Student not found', code: 'STUDENT_NOT_FOUND' } },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(
+      {
+        error: {
+          message: 'Internal server error while deleting student',
           code: 'INTERNAL_ERROR',
           meta: { error: error.message }
         }

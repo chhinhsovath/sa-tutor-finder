@@ -1,5 +1,14 @@
 All Users in SA Tutor Finder Database
 
+
+  API Login Test (Already Verified):
+  ✅ Mentor:    user_type = "mentor"
+  ✅ Student:   user_type = "student"
+  ✅ Counselor: user_type = "counselor"
+  ✅ Admin:     user_type = "admin"
+
+##Human: give me summary only. I did not have time to read long document. Remember this for our future conversations, always give me short and straightforward. Understand
+
   👨‍🏫 MENTORS (5 users)
 
   | #   | Name          | Email               | Level | Rating | Sessions | Status |
