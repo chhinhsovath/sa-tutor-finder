@@ -1,9 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
+import '../services/api_service.dart';
+import '../models/session.dart';
 
-class MentorDashboardScreen extends StatelessWidget {
+class MentorDashboardScreen extends StatefulWidget {
   const MentorDashboardScreen({super.key});
+
+  @override
+  State<MentorDashboardScreen> createState() => _MentorDashboardScreenState();
+}
+
+class _MentorDashboardScreenState extends State<MentorDashboardScreen> {
+  final ApiService _apiService = ApiService();
+  List<Session> _sessions = [];
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSessions();
+  }
+
+  Future<void> _loadSessions() async {
+    try {
+      setState(() => _isLoading = true);
+      final sessions = await _apiService.getSessions();
+      setState(() {
+        _sessions = sessions;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() => _isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
