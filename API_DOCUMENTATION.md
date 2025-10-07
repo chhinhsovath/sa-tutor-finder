@@ -1,85 +1,98 @@
-# SA Tutor Finder - Complete API Documentation
+# SA Tutor Finder - API Documentation
 
-**Production API**: https://apitutor.openplp.com
+## Overview
 
-All API endpoints use JSON format. Protected routes require JWT token in `Authorization: Bearer <token>` header.
+SA Tutor Finder is a complete tutor/mentor discovery and session booking platform with:
+- **Frontend**: Flutter mobile app
+- **Backend**: Next.js 14 App Router with REST API
+- **Database**: PostgreSQL (Prisma Cloud)
+- **Authentication**: JWT-based with bcrypt password hashing
 
----
-
-## Table of Contents
-1. [Authentication](#authentication)
-2. [Mentors](#mentors)
-3. [Students](#students)
-4. [Sessions (Bookings)](#sessions-bookings)
-5. [Messages](#messages)
-6. [Reviews & Ratings](#reviews--ratings)
-7. [Notifications](#notifications)
-8. [Student Progress](#student-progress)
-9. [Admin](#admin)
+**Production API URL**: https://apitutor.openplp.com
 
 ---
 
-## Authentication
+## 🔐 Authentication
 
-### Sign Up (Mentor)
-`POST /api/auth/signup`
+All authenticated endpoints require a JWT token in the `Authorization` header:
+```
+Authorization: Bearer <jwt_token>
+```
 
-**Body:**
+### POST /api/auth/signup
+Create a new account (mentor, student, or counselor).
+
+**Request Body:**
 ```json
 {
   "name": "John Doe",
   "email": "john@example.com",
   "password": "password123",
-  "english_level": "B2",
-  "contact": "telegram.me/johndoe"
+  "user_type": "student",
+  "english_level": "B1",
+  "phone_number": "+855123456789",
+  "learning_goals": "Improve conversation skills"
 }
 ```
 
-**Response:**
+**Response (201):**
 ```json
 {
-  "token": "eyJhbGci...",
-  "mentor": { "id": "uuid", "name": "John Doe", ... }
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "user": {
+    "id": "uuid",
+    "name": "John Doe",
+    "email": "john@example.com",
+    "user_type": "student",
+    ...
+  }
 }
 ```
 
-### Login
-`POST /api/auth/login`
+### POST /api/auth/login
+Login with email and password.
 
-**Body:**
+**Request Body:**
 ```json
 {
   "email": "john@example.com",
-  "password": "password123"
+  "password": "password123",
+  "user_type": "student"
 }
 ```
 
-**Response:**
+**Response (200):**
 ```json
 {
-  "token": "eyJhbGci...",
-  "mentor": { "id": "uuid", "name": "John Doe", ... }
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "user": {
+    "id": "uuid",
+    "name": "John Doe",
+    "email": "john@example.com",
+    "user_type": "student",
+    ...
+  }
 }
 ```
 
 ---
 
-## Mentors
+## 👨‍🏫 Mentors
 
-### List Mentors (Public)
-`GET /api/mentors`
+### GET /api/mentors
+List active mentors with optional filters.
 
 **Query Parameters:**
-- `day` (1-7): Filter by availability day (1=Monday, 7=Sunday)
-- `from`, `to` (HH:MM): Filter by time range
-- `level` (A1-C2): Filter by English level
+- `day` (1-7 for Mon-Sun)
+- `from` & `to` (time range, e.g., `from=09:00&to=12:00`)
+- `level` (English level: A1, A2, B1, B2, C1, C2)
 
 **Example:**
 ```
-GET /api/mentors?day=1&from=09:00&to=12:00&level=B2
+GET /api/mentors?day=1&from=09:00&to=12:00&level=C1
 ```
 
-**Response:**
+**Response (200):**
 ```json
 {
   "mentors": [
@@ -87,234 +100,207 @@ GET /api/mentors?day=1&from=09:00&to=12:00&level=B2
       "id": "uuid",
       "name": "Sarah Johnson",
       "email": "sarah@example.com",
-      "english_level": "C1",
-      "contact": "telegram.me/sarahj",
-      "status": "active",
-      "created_at": "2025-10-01T12:00:00Z"
+      "english_level": "C2",
+      "bio": "Experienced English teacher...",
+      "hourly_rate": 25.00,
+      "average_rating": 4.8,
+      "total_sessions": 45,
+      "availability_slots": [...]
     }
   ],
   "count": 1
 }
 ```
 
-### Get Mentor Detail
-`GET /api/mentors/[id]`
+### GET /api/mentors/[id]
+Get detailed mentor profile including reviews and availability.
 
-**Response:**
+**Response (200):**
 ```json
 {
   "mentor": {
     "id": "uuid",
     "name": "Sarah Johnson",
-    "english_level": "C1",
-    ...
+    "bio": "Experienced teacher...",
+    "average_rating": 4.8,
+    "availability_slots": [...],
+    "reviews": [
+      {
+        "id": "uuid",
+        "rating": 5,
+        "comment": "Excellent teacher!",
+        "student": { "name": "John Doe" }
+      }
+    ]
   }
 }
 ```
 
-### Get Mentor Reviews
-`GET /api/mentors/[id]/reviews`
+### GET /api/mentors/me
+Get authenticated mentor's own profile. **[Auth: Mentor]**
 
-**Response:**
+### PATCH /api/mentors/me
+Update mentor profile. **[Auth: Mentor]**
+
+**Request Body:**
 ```json
 {
-  "reviews": [
-    {
-      "id": "uuid",
-      "student_name": "Alice",
-      "rating": 5,
-      "comment": "Great mentor!",
-      "created_at": "2025-10-01T..."
-    }
-  ],
-  "stats": {
-    "total_reviews": 10,
-    "average_rating": "4.8",
-    "distribution": { "5": 8, "4": 2, "3": 0, "2": 0, "1": 0 }
-  }
+  "name": "Sarah Johnson",
+  "bio": "Updated bio...",
+  "hourly_rate": 30.00,
+  "english_level": "C2"
 }
 ```
 
-### Update Own Profile
-`PATCH /api/mentors/me` 🔒
+### GET /api/mentors/me/availability
+Get mentor's availability slots. **[Auth: Mentor]**
 
-**Headers:** `Authorization: Bearer <token>`
+### POST /api/mentors/me/availability
+Replace all availability slots (atomic operation). **[Auth: Mentor]**
 
-**Body:**
-```json
-{
-  "name": "John Updated",
-  "contact": "new_contact",
-  "english_level": "C1"
-}
-```
-
-### Get Own Availability
-`GET /api/mentors/me/availability` 🔒
-
-**Headers:** `Authorization: Bearer <token>`
-
-**Response:**
-```json
-{
-  "availability": [
-    {
-      "id": "uuid",
-      "day_of_week": 1,
-      "start_time": "09:00:00",
-      "end_time": "12:00:00"
-    }
-  ]
-}
-```
-
-### Update Own Availability
-`POST /api/mentors/me/availability` 🔒
-
-**Note:** This replaces ALL existing availability slots
-
-**Body:**
+**Request Body:**
 ```json
 {
   "slots": [
-    { "day_of_week": 1, "start_time": "09:00", "end_time": "12:00" },
-    { "day_of_week": 3, "start_time": "14:00", "end_time": "17:00" }
+    {
+      "day_of_week": 1,
+      "start_time": "09:00",
+      "end_time": "12:00"
+    },
+    {
+      "day_of_week": 3,
+      "start_time": "09:00",
+      "end_time": "12:00"
+    }
   ]
 }
 ```
 
 ---
 
-## Students
+## 📚 Sessions
 
-### List Students (Mentors/Counselors only)
-`GET /api/students` 🔒
-
-**Query Parameters:**
-- `status`: Filter by status (active/inactive)
-- `grade_level`: Filter by grade level
-
-**Response:**
-```json
-{
-  "students": [
-    {
-      "id": "uuid",
-      "name": "Alice Student",
-      "email": "alice@example.com",
-      "grade_level": "Grade 10",
-      "status": "active"
-    }
-  ],
-  "count": 1
-}
-```
-
----
-
-## Sessions (Bookings)
-
-### List Sessions
-`GET /api/sessions` 🔒
+### GET /api/sessions
+List user's sessions (student sees their bookings, mentor sees their sessions). **[Auth Required]**
 
 **Query Parameters:**
-- `user_type`: 'student' or 'mentor'
-- `status`: Filter by status (scheduled, completed, cancelled, no-show)
+- `status` (pending, confirmed, completed, cancelled, no_show)
 
-**Response:**
+**Response (200):**
 ```json
 {
   "sessions": [
     {
       "id": "uuid",
-      "student_id": "uuid",
-      "student_name": "Alice",
-      "mentor_id": "uuid",
-      "mentor_name": "Sarah",
       "session_date": "2025-10-15",
       "start_time": "09:00:00",
       "end_time": "10:00:00",
-      "status": "scheduled",
-      "notes": "Focus on grammar"
+      "duration_minutes": 60,
+      "status": "confirmed",
+      "student": { "name": "John Doe" },
+      "mentor": { "name": "Sarah Johnson" }
     }
   ],
   "count": 1
 }
 ```
 
-### Book a Session (Student)
-`POST /api/sessions` 🔒
+### POST /api/sessions
+Book a new session. **[Auth: Student]**
 
-**Body:**
+**Request Body:**
 ```json
 {
   "mentor_id": "uuid",
   "session_date": "2025-10-15",
   "start_time": "09:00",
   "end_time": "10:00",
-  "notes": "Need help with grammar"
+  "duration_minutes": 60,
+  "notes": "First session"
 }
 ```
 
-**Response:**
+**Response (201):**
 ```json
 {
-  "session": { "id": "uuid", "status": "scheduled", ... },
-  "message": "Session booked successfully"
+  "session": {
+    "id": "uuid",
+    "status": "pending",
+    "session_date": "2025-10-15",
+    ...
+  }
 }
 ```
 
-### Get Session Detail
-`GET /api/sessions/[id]` 🔒
+### GET /api/sessions/[id]
+Get session details. **[Auth: Student or Mentor of this session]**
 
-### Update Session
-`PATCH /api/sessions/[id]` 🔒
+### PATCH /api/sessions/[id]
+Update session status or add feedback. **[Auth: Student or Mentor of this session]**
 
-**Body:**
+**Request Body (Mentor confirms):**
+```json
+{
+  "status": "confirmed"
+}
+```
+
+**Request Body (Mark completed with feedback):**
 ```json
 {
   "status": "completed",
-  "notes": "Updated notes"
+  "mentor_feedback": "Great progress today!"
 }
 ```
 
-### Cancel Session
-`DELETE /api/sessions/[id]` 🔒
-
-Sets status to 'cancelled'
-
-### Submit Session Feedback (Mentor)
-`POST /api/sessions/[id]/feedback` 🔒
-
-**Body:**
+**Request Body (Cancel):**
 ```json
 {
-  "rating": 4,
-  "student_performance": "Good progress in speaking",
-  "notes": "Continue practicing pronunciation"
+  "status": "cancelled",
+  "cancellation_reason": "Schedule conflict"
 }
 ```
-
-### Get Session Feedback
-`GET /api/sessions/[id]/feedback` 🔒
 
 ---
 
-## Messages
+## ⭐ Reviews
 
-### Get Conversation Messages
-`GET /api/messages` 🔒
+### POST /api/reviews
+Create a review for a completed session. **[Auth: Student]**
+
+**Request Body:**
+```json
+{
+  "session_id": "uuid",
+  "rating": 5,
+  "comment": "Excellent teacher! Very patient and helpful."
+}
+```
+
+**Response (201):**
+```json
+{
+  "review": {
+    "id": "uuid",
+    "rating": 5,
+    "comment": "Excellent teacher!",
+    "student": { "name": "John Doe" },
+    "mentor": { "name": "Sarah Johnson" }
+  }
+}
+```
+
+---
+
+## 💬 Messages
+
+### GET /api/messages
+Get conversation with specific user. **[Auth Required]**
 
 **Query Parameters:**
-- `other_user_id`: UUID of other person
-- `other_user_type`: 'student', 'mentor', or 'counselor'
+- `user_id` (required) - ID of the other user
 
-**Example:**
-```
-GET /api/messages?other_user_id=uuid&other_user_type=mentor
-```
-
-**Response:**
+**Response (200):**
 ```json
 {
   "messages": [
@@ -322,363 +308,228 @@ GET /api/messages?other_user_id=uuid&other_user_type=mentor
       "id": "uuid",
       "sender_id": "uuid",
       "sender_type": "student",
-      "receiver_id": "uuid",
-      "receiver_type": "mentor",
-      "message": "Hello, I have a question",
+      "recipient_id": "uuid",
+      "recipient_type": "mentor",
+      "content": "Hi, looking forward to our session!",
       "is_read": true,
-      "created_at": "2025-10-01T12:00:00Z"
+      "created_at": "2025-10-07T12:00:00Z"
     }
   ],
   "count": 1
 }
 ```
 
-### Send Message
-`POST /api/messages` 🔒
+### POST /api/messages
+Send a message. **[Auth Required]**
 
-**Body:**
+**Request Body:**
 ```json
 {
-  "receiver_id": "uuid",
-  "receiver_type": "mentor",
-  "message": "Hello, I have a question about today's session"
+  "recipient_id": "uuid",
+  "recipient_type": "mentor",
+  "content": "Hi, can we reschedule?"
 }
 ```
 
 ---
 
-## Reviews & Ratings
+## 👨‍🎓 Students
 
-### Submit Review (Student)
-`POST /api/reviews` 🔒
+### GET /api/students/me
+Get student's own profile. **[Auth: Student]**
 
-**Body:**
+**Response (200):**
 ```json
 {
-  "mentor_id": "uuid",
-  "session_id": "uuid",
-  "rating": 5,
-  "comment": "Excellent mentor! Very patient and helpful."
+  "student": {
+    "id": "uuid",
+    "name": "John Doe",
+    "email": "john@example.com",
+    "english_level": "B1",
+    "learning_goals": "Improve conversation skills",
+    "total_sessions": 12
+  }
 }
 ```
 
-**Constraints:**
-- Rating: 1-5 (integer)
-- Cannot review same session twice
-- session_id is optional
+### PATCH /api/students/me
+Update student profile. **[Auth: Student]**
+
+**Request Body:**
+```json
+{
+  "name": "John Doe",
+  "english_level": "B2",
+  "learning_goals": "Prepare for IELTS"
+}
+```
 
 ---
 
-## Notifications
+## 🔔 Notifications
 
-### Get Notifications
-`GET /api/notifications` 🔒
+### GET /api/notifications
+List user's notifications. **[Auth Required]**
 
 **Query Parameters:**
-- `unread_only=true`: Get only unread notifications
+- `unread_only` (boolean)
 
-**Response:**
+**Response (200):**
 ```json
 {
   "notifications": [
     {
       "id": "uuid",
-      "user_id": "uuid",
-      "user_type": "student",
-      "title": "Session Reminder",
-      "message": "Your session with Sarah starts in 1 hour",
-      "type": "session",
+      "type": "session_confirmed",
+      "title": "Session Confirmed",
+      "content": "Your session with Sarah Johnson has been confirmed",
       "is_read": false,
-      "created_at": "2025-10-01T08:00:00Z"
+      "created_at": "2025-10-07T12:00:00Z"
     }
   ],
   "count": 1
 }
 ```
 
-### Mark Notifications as Read
-`PATCH /api/notifications` 🔒
+### PATCH /api/notifications/[id]
+Mark notification as read. **[Auth Required]**
 
-**Body:**
+---
+
+## 👑 Admin
+
+### GET /api/admin/mentors
+List all mentors. **[Auth: Admin]**
+
+**Query Parameters:**
+- `status` (active, inactive, suspended)
+
+### GET /api/admin/students
+List all students. **[Auth: Admin]**
+
+### GET /api/admin/analytics
+Get platform analytics. **[Auth: Admin]**
+
+**Response (200):**
 ```json
 {
-  "notification_ids": ["uuid1", "uuid2"]
-}
-```
-
-Or mark all as read:
-```json
-{
-  "mark_all": true
-}
-```
-
-### Get Notification Settings
-`GET /api/notifications/settings` 🔒
-
-**Response:**
-```json
-{
-  "settings": {
-    "email_notifications": true,
-    "push_notifications": true,
-    "sms_notifications": false,
-    "session_reminders": true,
-    "message_notifications": true,
-    "review_notifications": true
+  "analytics": {
+    "mentors": { "total": 5, "active": 4 },
+    "students": { "total": 10, "active": 8 },
+    "sessions": { "total": 50, "completed": 30, "pending": 5 },
+    "reviews": { "total": 25, "average_rating": 4.7 }
   }
 }
 ```
 
-### Update Notification Settings
-`PATCH /api/notifications/settings` 🔒
+---
 
-**Body:**
-```json
-{
-  "email_notifications": false,
-  "push_notifications": true,
-  "session_reminders": true
-}
-```
+## 🗄️ Database Schema
+
+### Key Tables:
+- **mentors** - Mentor profiles with bio, hourly_rate, average_rating
+- **students** - Student profiles with learning_goals
+- **counselors** - Guidance counselor accounts
+- **admins** - Admin accounts
+- **availability_slots** - Weekly recurring availability (day_of_week + time)
+- **sessions** - Booked sessions (pending → confirmed → completed)
+- **messages** - 1-on-1 messaging (polymorphic)
+- **reviews** - Session reviews (1-5 stars)
+- **notifications** - System notifications
+- **transactions** - Financial records
+
+### Key Relationships:
+- One mentor has many availability_slots, sessions, reviews
+- One student has many sessions, reviews, notifications
+- Each session can have one review
+- Messages are polymorphic (sender/recipient can be student/mentor/counselor)
 
 ---
 
-## Student Progress
+## 🧪 Test Accounts
 
-### Get Student Progress Reports
-`GET /api/students/[id]/progress` 🔒
+All test accounts use password: **password123**
 
-**Response:**
-```json
-{
-  "progress_reports": [
-    {
-      "id": "uuid",
-      "student_id": "uuid",
-      "recorder_id": "uuid",
-      "recorder_type": "mentor",
-      "recorder_name": "Sarah Johnson",
-      "progress_notes": "Great improvement in speaking",
-      "skills_improved": "Pronunciation, fluency",
-      "areas_for_improvement": "Grammar tenses",
-      "created_at": "2025-10-01T12:00:00Z"
-    }
-  ],
-  "count": 1
-}
-```
+**Mentors:**
+- sarah@example.com (C2, 45 sessions, 4.8 rating)
+- michael@example.com (C1, 32 sessions, 4.9 rating)
+- emma@example.com (B2, 28 sessions, 4.7 rating)
+- david@example.com (C1, 15 sessions, 4.6 rating)
+- lisa@example.com (B2, new mentor)
 
-### Add Progress Report (Mentor/Counselor)
-`POST /api/students/[id]/progress` 🔒
+**Students:**
+- john@example.com (A2, 12 sessions)
+- maria@example.com (B1, 8 sessions)
+- ahmed@example.com (A1, 3 sessions)
+- yuki@example.com (B2, new student)
 
-**Body:**
-```json
-{
-  "progress_notes": "Student showed great improvement this week",
-  "skills_improved": "Speaking confidence, vocabulary",
-  "areas_for_improvement": "Past tense usage"
-}
-```
+**Counselor:**
+- jennifer@example.com
+
+**Admin:**
+- admin@example.com
 
 ---
 
-## Admin
+## 🚀 Development Commands
 
-### List All Students
-`GET /api/admin/students` 🔒🔑
-
-**Query Parameters:**
-- `status`: Filter by status
-- `grade_level`: Filter by grade level
-- `search`: Search by name or email
-
-**Response:**
-```json
-{
-  "students": [
-    {
-      "id": "uuid",
-      "name": "Alice",
-      "email": "alice@example.com",
-      "grade_level": "Grade 10",
-      "status": "active",
-      "total_sessions": "15",
-      "completed_sessions": "12"
-    }
-  ],
-  "count": 1
-}
-```
-
-### Update Student
-`PATCH /api/admin/students/[id]` 🔒🔑
-
-**Body:**
-```json
-{
-  "status": "inactive",
-  "grade_level": "Grade 11"
-}
-```
-
-### Update Mentor Status
-`PATCH /api/admin/mentors/[id]/status` 🔒🔑
-
-**Body:**
-```json
-{
-  "status": "inactive"
-}
-```
-
-### List All Counselors
-`GET /api/admin/counselors` 🔒🔑
-
-**Query Parameters:**
-- `status`: Filter by status
-- `search`: Search by name or email
-
-### Platform Analytics
-`GET /api/admin/analytics` 🔒🔑
-
-**Response:**
-```json
-{
-  "users": {
-    "active_mentors": "45",
-    "total_mentors": "50",
-    "active_students": "120",
-    "total_students": "135",
-    "active_counselors": "5",
-    "total_counselors": "6"
-  },
-  "sessions": {
-    "total_sessions": "450",
-    "scheduled": "50",
-    "completed": "350",
-    "cancelled": "40",
-    "no_show": "10"
-  },
-  "session_trend": [
-    { "date": "2025-10-01", "count": "15" },
-    { "date": "2025-09-30", "count": "18" }
-  ],
-  "ratings": {
-    "average_rating": "4.7",
-    "total_reviews": "280"
-  },
-  "top_mentors": [
-    {
-      "id": "uuid",
-      "name": "Sarah Johnson",
-      "english_level": "C1",
-      "average_rating": "4.9",
-      "review_count": "45"
-    }
-  ],
-  "engagement": {
-    "messages_last_7_days": "350",
-    "sessions_last_7_days": "45",
-    "reviews_last_7_days": "12"
-  }
-}
-```
-
-### Financial Reports
-`GET /api/admin/financial` 🔒🔑
-
-**Query Parameters:**
-- `start_date`: YYYY-MM-DD
-- `end_date`: YYYY-MM-DD
-
-**Response:**
-```json
-{
-  "summary": {
-    "total_sessions": 450,
-    "completed_sessions": 350,
-    "total_revenue": 7000,
-    "average_session_rate": 20
-  },
-  "monthly_revenue": [
-    {
-      "month": "2025-10-01T00:00:00Z",
-      "completed_sessions": 120,
-      "cancelled_sessions": 15,
-      "revenue": 2400
-    }
-  ],
-  "top_earning_mentors": [
-    {
-      "id": "uuid",
-      "name": "Sarah Johnson",
-      "email": "sarah@example.com",
-      "completed_sessions": "45",
-      "total_earnings": "900"
-    }
-  ]
-}
-```
-
----
-
-## Error Responses
-
-All errors follow this format:
-
-```json
-{
-  "error": {
-    "message": "Detailed error message",
-    "code": "ERROR_CODE",
-    "meta": { "additional": "context" }
-  }
-}
-```
-
-**Common Error Codes:**
-- `UNAUTHORIZED` (401): Missing or invalid token
-- `FORBIDDEN` (403): Valid token but insufficient permissions
-- `VALIDATION_ERROR` (400): Invalid input data
-- `MENTOR_NOT_FOUND` (404): Mentor doesn't exist
-- `STUDENT_NOT_FOUND` (404): Student doesn't exist
-- `SESSION_NOT_FOUND` (404): Session doesn't exist
-- `TIME_SLOT_CONFLICT` (400): Session time slot already booked
-- `MENTOR_NOT_AVAILABLE` (400): Mentor not available at selected time
-- `REVIEW_EXISTS` (400): Already reviewed this session
-- `INTERNAL_ERROR` (500): Server error
-
----
-
-## Legend
-- 🔒 = Requires authentication (JWT token)
-- 🔑 = Requires admin role (not yet implemented)
-
----
-
-## Testing with curl
-
-**Login:**
 ```bash
-curl -X POST https://apitutor.openplp.com/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"email":"sarah.johnson@example.com","password":"password123"}'
-```
+# Install dependencies
+npm install
 
-**List mentors:**
-```bash
-curl https://apitutor.openplp.com/api/mentors?level=C1
-```
+# Generate Prisma Client
+npx prisma generate
 
-**Get own availability (with token):**
-```bash
-curl https://apitutor.openplp.com/api/mentors/me/availability \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+# Push schema to database
+npx prisma db push
+
+# Seed database with test data
+npx prisma db seed
+
+# Run development server
+npm run dev
+
+# Build for production
+npm run build
+
+# Start production server
+npm start
+
+# Open Prisma Studio (database GUI)
+npx prisma studio
 ```
 
 ---
 
-**Total API Routes: 28+**
+## 📱 Flutter App Integration
 
-All routes are fully functional and ready for integration with the Flutter mobile app.
+The Flutter app is configured to connect to:
+- Production: `https://apitutor.openplp.com/api`
+- Development: `http://localhost:3000/api`
+
+API responses use strict **snake_case** convention for all field names to ensure compatibility with Flutter models.
+
+---
+
+## ✅ Implementation Status
+
+### Completed Features:
+✅ Complete database schema (10 tables)  
+✅ JWT authentication with bcrypt  
+✅ Mentor discovery with filters (day, time, level)  
+✅ Session booking and management  
+✅ Messaging system  
+✅ Review and rating system  
+✅ Student profiles  
+✅ Mentor profiles with availability management  
+✅ Notifications system  
+✅ Admin analytics and user management  
+✅ Comprehensive seed data  
+
+### Production Ready:
+- All API routes migrated to Prisma ORM
+- Snake_case naming convention enforced
+- Detailed error responses
+- JWT authentication and authorization
+- Transaction support for atomic operations
+- Database deployed on Prisma Cloud

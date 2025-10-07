@@ -11,13 +11,20 @@ export function verifyPassword(password: string, hash: string): Promise<boolean>
   return bcrypt.compare(password, hash);
 }
 
-export function signToken(payload: { mentor_id: string }): string {
+// JWT payload structure
+export interface JWTPayload {
+  user_id?: string;
+  user_type?: 'student' | 'mentor' | 'counselor' | 'admin';
+  mentor_id?: string; // Legacy support
+}
+
+export function signToken(payload: JWTPayload): string {
   return jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' });
 }
 
-export function verifyToken(token: string): { mentor_id: string } | null {
+export function verifyToken(token: string): JWTPayload | null {
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as { mentor_id: string };
+    const decoded = jwt.verify(token, JWT_SECRET) as JWTPayload;
     return decoded;
   } catch {
     return null;

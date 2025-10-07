@@ -4,7 +4,7 @@ import { extractToken, verifyToken } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
-// GET /api/notifications - List user's notifications
+// GET /api/admin/mentors - List all mentors (admin only)
 export async function GET(request: NextRequest) {
   try {
     const token = extractToken(request.headers.get('authorization'));
@@ -16,37 +16,37 @@ export async function GET(request: NextRequest) {
     }
 
     const decoded = verifyToken(token);
-    if (!decoded) {
+    if (!decoded || decoded.user_type !== 'admin') {
       return NextResponse.json(
-        { error: { message: 'Invalid or expired token', code: 'UNAUTHORIZED', meta: {} } },
-        { status: 401 }
+        { error: { message: 'Admin access required', code: 'FORBIDDEN', meta: {} } },
+        { status: 403 }
       );
     }
 
-    const userId = decoded.user_id || decoded.mentor_id;
-    const userType = decoded.user_type || 'mentor';
-
     const { searchParams } = new URL(request.url);
-    const unreadOnly = searchParams.get('unread_only') === 'true';
+    const status = searchParams.get('status');
 
-    const whereConditions: any = {
-      user_id: userId,
-      user_type: userType
-    };
+    const whereConditions: any = {};
+    if (status) whereConditions.status = status;
 
-    if (unreadOnly) {
-      whereConditions.is_read = false;
-    }
-
-    const notifications = await prisma.notifications.findMany({
+    const mentors = await prisma.mentors.findMany({
       where: whereConditions,
-      orderBy: { created_at: 'desc' },
-      take: 50
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        english_level: true,
+        status: true,
+        total_sessions: true,
+        average_rating: true,
+        created_at: true
+      },
+      orderBy: { created_at: 'desc' }
     });
 
-    return NextResponse.json({ notifications, count: notifications.length });
+    return NextResponse.json({ mentors, count: mentors.length });
   } catch (error: any) {
-    console.error('Get notifications error:', error);
+    console.error('Admin get mentors error:', error);
     return NextResponse.json(
       { error: { message: 'Internal server error', code: 'INTERNAL_ERROR', meta: { error: error.message } } },
       { status: 500 }

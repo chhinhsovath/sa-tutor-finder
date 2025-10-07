@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import pool from '@/lib/db';
+import prisma from '@/lib/prisma';
 import { extractToken, verifyToken } from '@/lib/auth';
+
+export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
   try {
@@ -33,16 +35,32 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const result = await pool.query(
-      `SELECT id, day_of_week, start_time, end_time
-       FROM availability_slots
-       WHERE mentor_id = $1
-       ORDER BY day_of_week, start_time`,
-      [decoded.mentor_id]
-    );
+    // Support both old (mentor_id) and new (user_id) token formats
+    const mentorId = decoded.user_id || decoded.mentor_id;
+
+    if (!mentorId || (decoded.user_type && decoded.user_type !== 'mentor')) {
+      return NextResponse.json(
+        {
+          error: {
+            message: 'Only mentors can access this endpoint',
+            code: 'FORBIDDEN',
+            meta: {}
+          }
+        },
+        { status: 403 }
+      );
+    }
+
+    const slots = await prisma.availability_slots.findMany({
+      where: { mentor_id: mentorId },
+      orderBy: [
+        { day_of_week: 'asc' },
+        { start_time: 'asc' }
+      ]
+    });
 
     return NextResponse.json({
-      availability_slots: result.rows
+      availability_slots: slots
     });
   } catch (error: any) {
     console.error('Get availability error:', error);
@@ -87,6 +105,22 @@ export async function POST(request: NextRequest) {
           }
         },
         { status: 401 }
+      );
+    }
+
+    // Support both old (mentor_id) and new (user_id) token formats
+    const mentorId = decoded.user_id || decoded.mentor_id;
+
+    if (!mentorId || (decoded.user_type && decoded.user_type !== 'mentor')) {
+      return NextResponse.json(
+        {
+          error: {
+            message: 'Only mentors can access this endpoint',
+            code: 'FORBIDDEN',
+            meta: {}
+          }
+        },
+        { status: 403 }
       );
     }
 
@@ -139,41 +173,38 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Use transaction for atomic replacement
-    const client = await pool.connect();
-    try {
-      await client.query('BEGIN');
-
+    // Use Prisma transaction for atomic replacement
+    const result = await prisma.$transaction(async (tx) => {
       // Delete existing slots
-      await client.query(
-        'DELETE FROM availability_slots WHERE mentor_id = $1',
-        [decoded.mentor_id]
-      );
+      await tx.availability_slots.deleteMany({
+        where: { mentor_id: mentorId }
+      });
 
       // Insert new slots
       const insertedSlots = [];
       for (const slot of slots) {
-        const result = await client.query(
-          `INSERT INTO availability_slots (mentor_id, day_of_week, start_time, end_time)
-           VALUES ($1, $2, $3, $4)
-           RETURNING id, day_of_week, start_time, end_time`,
-          [decoded.mentor_id, slot.day_of_week, slot.start_time, slot.end_time]
-        );
-        insertedSlots.push(result.rows[0]);
+        // Parse time strings to Date objects for TIME columns
+        const startTime = new Date(`1970-01-01T${slot.start_time}:00`);
+        const endTime = new Date(`1970-01-01T${slot.end_time}:00`);
+
+        const newSlot = await tx.availability_slots.create({
+          data: {
+            mentor_id: mentorId,
+            day_of_week: slot.day_of_week,
+            start_time: startTime,
+            end_time: endTime
+          }
+        });
+        insertedSlots.push(newSlot);
       }
 
-      await client.query('COMMIT');
+      return insertedSlots;
+    });
 
-      return NextResponse.json({
-        message: 'Availability updated successfully',
-        availability_slots: insertedSlots
-      });
-    } catch (error) {
-      await client.query('ROLLBACK');
-      throw error;
-    } finally {
-      client.release();
-    }
+    return NextResponse.json({
+      message: 'Availability updated successfully',
+      availability_slots: result
+    });
   } catch (error: any) {
     console.error('Update availability error:', error);
     return NextResponse.json(

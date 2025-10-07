@@ -4,8 +4,11 @@ import { extractToken, verifyToken } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
-// GET /api/notifications - List user's notifications
-export async function GET(request: NextRequest) {
+// PATCH /api/notifications/[id] - Mark notification as read
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
     const token = extractToken(request.headers.get('authorization'));
     if (!token) {
@@ -24,29 +27,33 @@ export async function GET(request: NextRequest) {
     }
 
     const userId = decoded.user_id || decoded.mentor_id;
-    const userType = decoded.user_type || 'mentor';
 
-    const { searchParams } = new URL(request.url);
-    const unreadOnly = searchParams.get('unread_only') === 'true';
-
-    const whereConditions: any = {
-      user_id: userId,
-      user_type: userType
-    };
-
-    if (unreadOnly) {
-      whereConditions.is_read = false;
-    }
-
-    const notifications = await prisma.notifications.findMany({
-      where: whereConditions,
-      orderBy: { created_at: 'desc' },
-      take: 50
+    const notification = await prisma.notifications.findUnique({
+      where: { id: params.id }
     });
 
-    return NextResponse.json({ notifications, count: notifications.length });
+    if (!notification) {
+      return NextResponse.json(
+        { error: { message: 'Notification not found', code: 'NOTIFICATION_NOT_FOUND', meta: {} } },
+        { status: 404 }
+      );
+    }
+
+    if (notification.user_id !== userId) {
+      return NextResponse.json(
+        { error: { message: 'Unauthorized', code: 'FORBIDDEN', meta: {} } },
+        { status: 403 }
+      );
+    }
+
+    const updated = await prisma.notifications.update({
+      where: { id: params.id },
+      data: { is_read: true }
+    });
+
+    return NextResponse.json({ notification: updated });
   } catch (error: any) {
-    console.error('Get notifications error:', error);
+    console.error('Mark notification read error:', error);
     return NextResponse.json(
       { error: { message: 'Internal server error', code: 'INTERNAL_ERROR', meta: { error: error.message } } },
       { status: 500 }

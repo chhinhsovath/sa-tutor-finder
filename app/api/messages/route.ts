@@ -1,16 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
-import pool from '@/lib/db';
-import { verifyToken } from '@/lib/auth';
+import prisma from '@/lib/prisma';
+import { extractToken, verifyToken } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
-// GET /api/messages - Get messages for a conversation
+// GET /api/messages - List messages (conversation with specific user)
 export async function GET(request: NextRequest) {
   try {
-    const token = request.headers.get('authorization')?.replace('Bearer ', '');
+    const token = extractToken(request.headers.get('authorization'));
     if (!token) {
       return NextResponse.json(
-        { error: { message: 'Authorization token required', code: 'UNAUTHORIZED' } },
+        { error: { message: 'No authorization token provided', code: 'UNAUTHORIZED', meta: {} } },
         { status: 401 }
       );
     }
@@ -18,63 +18,50 @@ export async function GET(request: NextRequest) {
     const decoded = verifyToken(token);
     if (!decoded) {
       return NextResponse.json(
-        { error: { message: 'Invalid or expired token', code: 'UNAUTHORIZED' } },
+        { error: { message: 'Invalid or expired token', code: 'UNAUTHORIZED', meta: {} } },
         { status: 401 }
       );
     }
 
-    const { searchParams } = new URL(request.url);
-    const otherUserId = searchParams.get('other_user_id');
-    const otherUserType = searchParams.get('other_user_type'); // 'student', 'mentor', 'counselor'
+    const userId = decoded.user_id || decoded.mentor_id;
+    const userType = decoded.user_type || 'mentor';
 
-    if (!otherUserId || !otherUserType) {
+    const { searchParams } = new URL(request.url);
+    const otherUserId = searchParams.get('user_id');
+
+    if (!otherUserId) {
       return NextResponse.json(
-        {
-          error: {
-            message: 'Missing required parameters: other_user_id, other_user_type',
-            code: 'VALIDATION_ERROR'
-          }
-        },
+        { error: { message: 'user_id query parameter is required', code: 'VALIDATION_ERROR', meta: {} } },
         { status: 400 }
       );
     }
 
-    // Determine current user type (currently mentor-only system)
-    const currentUserType = 'mentor';
-    const currentUserId = decoded.mentor_id;
-
-    const result = await pool.query(
-      `SELECT * FROM messages
-       WHERE (
-         (sender_id = $1 AND sender_type = $2 AND receiver_id = $3 AND receiver_type = $4) OR
-         (sender_id = $3 AND sender_type = $4 AND receiver_id = $1 AND receiver_type = $2)
-       )
-       ORDER BY created_at ASC`,
-      [currentUserId, currentUserType, otherUserId, otherUserType]
-    );
+    // Fetch messages between the two users
+    const messages = await prisma.messages.findMany({
+      where: {
+        OR: [
+          { sender_id: userId, recipient_id: otherUserId },
+          { sender_id: otherUserId, recipient_id: userId }
+        ]
+      },
+      orderBy: { created_at: 'asc' }
+    });
 
     // Mark messages as read
-    await pool.query(
-      `UPDATE messages
-       SET is_read = TRUE
-       WHERE receiver_id = $1 AND receiver_type = $2 AND sender_id = $3 AND sender_type = $4 AND is_read = FALSE`,
-      [currentUserId, currentUserType, otherUserId, otherUserType]
-    );
-
-    return NextResponse.json({
-      messages: result.rows,
-      count: result.rows.length
+    await prisma.messages.updateMany({
+      where: {
+        sender_id: otherUserId,
+        recipient_id: userId,
+        is_read: false
+      },
+      data: { is_read: true }
     });
+
+    return NextResponse.json({ messages, count: messages.length });
   } catch (error: any) {
     console.error('Get messages error:', error);
     return NextResponse.json(
-      {
-        error: {
-          message: 'Internal server error while fetching messages',
-          code: 'INTERNAL_ERROR',
-          meta: { error: error.message }
-        }
-      },
+      { error: { message: 'Internal server error', code: 'INTERNAL_ERROR', meta: { error: error.message } } },
       { status: 500 }
     );
   }
@@ -83,10 +70,10 @@ export async function GET(request: NextRequest) {
 // POST /api/messages - Send a message
 export async function POST(request: NextRequest) {
   try {
-    const token = request.headers.get('authorization')?.replace('Bearer ', '');
+    const token = extractToken(request.headers.get('authorization'));
     if (!token) {
       return NextResponse.json(
-        { error: { message: 'Authorization token required', code: 'UNAUTHORIZED' } },
+        { error: { message: 'No authorization token provided', code: 'UNAUTHORIZED', meta: {} } },
         { status: 401 }
       );
     }
@@ -94,51 +81,62 @@ export async function POST(request: NextRequest) {
     const decoded = verifyToken(token);
     if (!decoded) {
       return NextResponse.json(
-        { error: { message: 'Invalid or expired token', code: 'UNAUTHORIZED' } },
+        { error: { message: 'Invalid or expired token', code: 'UNAUTHORIZED', meta: {} } },
+        { status: 401 }
+      );
+    }
+
+    const userId = decoded.user_id || decoded.mentor_id;
+    const userType = decoded.user_type || 'mentor';
+
+    if (!userId) {
+      return NextResponse.json(
+        { error: { message: 'Invalid token', code: 'UNAUTHORIZED', meta: {} } },
         { status: 401 }
       );
     }
 
     const body = await request.json();
-    const { receiver_id, receiver_type, message } = body;
+    const { recipient_id, recipient_type, content } = body;
 
-    if (!receiver_id || !receiver_type || !message) {
+    if (!recipient_id || !recipient_type || !content) {
       return NextResponse.json(
         {
           error: {
-            message: 'Missing required fields: receiver_id, receiver_type, message',
-            code: 'VALIDATION_ERROR'
+            message: 'Missing required fields',
+            code: 'VALIDATION_ERROR',
+            meta: { required: ['recipient_id', 'recipient_type', 'content'] }
           }
         },
         { status: 400 }
       );
     }
 
-    // Determine current user type (currently mentor-only system)
-    const senderType = 'mentor';
-    const senderId = decoded.mentor_id;
+    if (!['student', 'mentor', 'counselor'].includes(recipient_type)) {
+      return NextResponse.json(
+        { error: { message: 'Invalid recipient_type', code: 'VALIDATION_ERROR', meta: {} } },
+        { status: 400 }
+      );
+    }
 
-    const result = await pool.query(
-      `INSERT INTO messages (sender_id, sender_type, receiver_id, receiver_type, message, is_read)
-       VALUES ($1, $2, $3, $4, $5, FALSE)
-       RETURNING *`,
-      [senderId, senderType, receiver_id, receiver_type, message]
-    );
+    // Create message
+    const message = await prisma.messages.create({
+      data: {
+        sender_id: userId,
+        sender_type: userType as any,
+        recipient_id,
+        recipient_type: recipient_type as any,
+        content
+      }
+    });
 
-    return NextResponse.json({
-      message: result.rows[0],
-      success: true
-    }, { status: 201 });
+    // TODO: Create notification for recipient
+
+    return NextResponse.json({ message }, { status: 201 });
   } catch (error: any) {
     console.error('Send message error:', error);
     return NextResponse.json(
-      {
-        error: {
-          message: 'Internal server error while sending message',
-          code: 'INTERNAL_ERROR',
-          meta: { error: error.message }
-        }
-      },
+      { error: { message: 'Internal server error', code: 'INTERNAL_ERROR', meta: { error: error.message } } },
       { status: 500 }
     );
   }

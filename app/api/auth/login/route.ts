@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import pool from '@/lib/db';
+import prisma from '@/lib/prisma';
 import { verifyPassword, signToken } from '@/lib/auth';
+
+export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { email, password } = body;
+    const { email, password, user_type } = body;
 
     // Validation
     if (!email || !password) {
@@ -21,15 +23,65 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Find mentor
-    const result = await pool.query(
-      `SELECT id, name, email, password_hash, english_level, contact, timezone, status, created_at, updated_at
-       FROM mentors
-       WHERE email = $1`,
-      [email]
-    );
+    let user: any = null;
+    let userRole: string = '';
 
-    if (result.rows.length === 0) {
+    // If user_type is specified, only search that table
+    if (user_type) {
+      switch (user_type) {
+        case 'mentor':
+          user = await prisma.mentors.findUnique({ where: { email } });
+          userRole = 'mentor';
+          break;
+        case 'student':
+          user = await prisma.students.findUnique({ where: { email } });
+          userRole = 'student';
+          break;
+        case 'counselor':
+          user = await prisma.counselors.findUnique({ where: { email } });
+          userRole = 'counselor';
+          break;
+        case 'admin':
+          user = await prisma.admins.findUnique({ where: { email } });
+          userRole = 'admin';
+          break;
+        default:
+          return NextResponse.json(
+            {
+              error: {
+                message: 'Invalid user type',
+                code: 'VALIDATION_ERROR',
+                meta: { valid_types: ['mentor', 'student', 'counselor', 'admin'] }
+              }
+            },
+            { status: 400 }
+          );
+      }
+    } else {
+      // Search all user tables
+      const [mentor, student, counselor, admin] = await Promise.all([
+        prisma.mentors.findUnique({ where: { email } }),
+        prisma.students.findUnique({ where: { email } }),
+        prisma.counselors.findUnique({ where: { email } }),
+        prisma.admins.findUnique({ where: { email } })
+      ]);
+
+      if (mentor) {
+        user = mentor;
+        userRole = 'mentor';
+      } else if (student) {
+        user = student;
+        userRole = 'student';
+      } else if (counselor) {
+        user = counselor;
+        userRole = 'counselor';
+      } else if (admin) {
+        user = admin;
+        userRole = 'admin';
+      }
+    }
+
+    if (!user) {
       return NextResponse.json(
         {
           error: {
@@ -42,10 +94,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const mentor = result.rows[0];
-
     // Verify password
-    const isValid = await verifyPassword(password, mentor.password_hash);
+    const isValid = await verifyPassword(password, user.password_hash);
 
     if (!isValid) {
       return NextResponse.json(
@@ -60,21 +110,34 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate JWT
-    const token = signToken({ mentor_id: mentor.id });
+    // Check if user is active (not suspended/inactive)
+    if (user.status && user.status !== 'active') {
+      return NextResponse.json(
+        {
+          error: {
+            message: 'Account is not active',
+            code: 'AUTH_ACCOUNT_INACTIVE',
+            meta: { status: user.status }
+          }
+        },
+        { status: 403 }
+      );
+    }
+
+    // Generate JWT with user_id and user_type
+    const token = signToken({
+      user_id: user.id,
+      user_type: userRole as 'student' | 'mentor' | 'counselor' | 'admin'
+    });
+
+    // Remove password_hash from response
+    const { password_hash, ...userWithoutPassword } = user;
 
     return NextResponse.json({
       token,
-      mentor: {
-        id: mentor.id,
-        name: mentor.name,
-        email: mentor.email,
-        english_level: mentor.english_level,
-        contact: mentor.contact,
-        timezone: mentor.timezone,
-        status: mentor.status,
-        created_at: mentor.created_at,
-        updated_at: mentor.updated_at
+      user: {
+        ...userWithoutPassword,
+        user_type: userRole
       }
     });
   } catch (error: any) {

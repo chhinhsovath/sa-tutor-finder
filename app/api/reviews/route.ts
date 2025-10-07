@@ -1,16 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
-import pool from '@/lib/db';
-import { verifyToken } from '@/lib/auth';
+import prisma from '@/lib/prisma';
+import { extractToken, verifyToken } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
-// POST /api/reviews - Submit a review for a mentor
+// POST /api/reviews - Create a review for a session
 export async function POST(request: NextRequest) {
   try {
-    const token = request.headers.get('authorization')?.replace('Bearer ', '');
+    const token = extractToken(request.headers.get('authorization'));
     if (!token) {
       return NextResponse.json(
-        { error: { message: 'Authorization token required', code: 'UNAUTHORIZED' } },
+        { error: { message: 'No authorization token provided', code: 'UNAUTHORIZED', meta: {} } },
         { status: 401 }
       );
     }
@@ -18,59 +18,103 @@ export async function POST(request: NextRequest) {
     const decoded = verifyToken(token);
     if (!decoded) {
       return NextResponse.json(
-        { error: { message: 'Invalid or expired token', code: 'UNAUTHORIZED' } },
+        { error: { message: 'Invalid or expired token', code: 'UNAUTHORIZED', meta: {} } },
         { status: 401 }
       );
     }
 
-    const body = await request.json();
-    const { mentor_id, session_id, rating, comment } = body;
+    const userId = decoded.user_id || decoded.mentor_id;
+    const userType = decoded.user_type || 'student';
 
-    if (!mentor_id || !rating) {
+    if (userType !== 'student') {
       return NextResponse.json(
-        {
-          error: {
-            message: 'Missing required fields: mentor_id, rating',
-            code: 'VALIDATION_ERROR'
-          }
-        },
+        { error: { message: 'Only students can leave reviews', code: 'FORBIDDEN', meta: {} } },
+        { status: 403 }
+      );
+    }
+
+    const body = await request.json();
+    const { session_id, rating, comment } = body;
+
+    if (!session_id || !rating) {
+      return NextResponse.json(
+        { error: { message: 'session_id and rating are required', code: 'VALIDATION_ERROR', meta: {} } },
         { status: 400 }
       );
     }
 
     if (rating < 1 || rating > 5) {
       return NextResponse.json(
-        {
-          error: {
-            message: 'Rating must be between 1 and 5',
-            code: 'VALIDATION_ERROR'
-          }
-        },
+        { error: { message: 'Rating must be between 1 and 5', code: 'VALIDATION_ERROR', meta: {} } },
         { status: 400 }
       );
     }
 
-    // This route requires student authentication
-    // Current system only supports mentor auth, so return error
-    return NextResponse.json(
-      {
-        error: {
-          message: 'Review submission requires student authentication (not yet implemented)',
-          code: 'NOT_IMPLEMENTED'
-        }
+    // Check session exists and belongs to student
+    const session = await prisma.sessions.findUnique({ where: { id: session_id } });
+    if (!session) {
+      return NextResponse.json(
+        { error: { message: 'Session not found', code: 'SESSION_NOT_FOUND', meta: {} } },
+        { status: 404 }
+      );
+    }
+
+    if (session.student_id !== userId) {
+      return NextResponse.json(
+        { error: { message: 'You can only review your own sessions', code: 'FORBIDDEN', meta: {} } },
+        { status: 403 }
+      );
+    }
+
+    if (session.status !== 'completed') {
+      return NextResponse.json(
+        { error: { message: 'Can only review completed sessions', code: 'VALIDATION_ERROR', meta: {} } },
+        { status: 400 }
+      );
+    }
+
+    // Check if review already exists
+    const existingReview = await prisma.reviews.findUnique({ where: { session_id } });
+    if (existingReview) {
+      return NextResponse.json(
+        { error: { message: 'Session already has a review', code: 'REVIEW_EXISTS', meta: {} } },
+        { status: 409 }
+      );
+    }
+
+    // Create review
+    const review = await prisma.reviews.create({
+      data: {
+        session_id,
+        student_id: userId,
+        mentor_id: session.mentor_id,
+        rating,
+        comment: comment || null
       },
-      { status: 501 }
-    );
+      include: {
+        student: { select: { id: true, name: true } },
+        mentor: { select: { id: true, name: true } }
+      }
+    });
+
+    // Update mentor's average rating
+    const mentorReviews = await prisma.reviews.findMany({
+      where: { mentor_id: session.mentor_id },
+      select: { rating: true }
+    });
+
+    const avgRating = mentorReviews.reduce((sum, r) => sum + r.rating, 0) / mentorReviews.length;
+
+    await prisma.mentors.update({
+      where: { id: session.mentor_id },
+      data: { average_rating: avgRating }
+    });
+
+    return NextResponse.json({ review }, { status: 201 });
   } catch (error: any) {
-    console.error('Submit review error:', error);
+    console.error('Create review error:', error);
     return NextResponse.json(
-      {
-        error: {
-          message: 'Internal server error while submitting review',
-          code: 'INTERNAL_ERROR',
-          meta: { error: error.message }
-        }
-      },
+      { error: { message: 'Internal server error', code: 'INTERNAL_ERROR', meta: { error: error.message } } },
       { status: 500 }
     );
   }

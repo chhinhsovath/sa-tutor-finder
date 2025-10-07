@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import pool from '@/lib/db';
+import prisma from '@/lib/prisma';
 import { extractToken, verifyToken } from '@/lib/auth';
+
+export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
   try {
@@ -33,14 +35,42 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const result = await pool.query(
-      `SELECT id, name, email, english_level, contact, timezone, status, created_at, updated_at
-       FROM mentors
-       WHERE id = $1`,
-      [decoded.mentor_id]
-    );
+    // Support both old (mentor_id) and new (user_id) token formats
+    const mentorId = decoded.user_id || decoded.mentor_id;
 
-    if (result.rows.length === 0) {
+    if (!mentorId || (decoded.user_type && decoded.user_type !== 'mentor')) {
+      return NextResponse.json(
+        {
+          error: {
+            message: 'Only mentors can access this endpoint',
+            code: 'FORBIDDEN',
+            meta: {}
+          }
+        },
+        { status: 403 }
+      );
+    }
+
+    const mentor = await prisma.mentors.findUnique({
+      where: { id: mentorId },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        english_level: true,
+        contact: true,
+        timezone: true,
+        status: true,
+        bio: true,
+        hourly_rate: true,
+        total_sessions: true,
+        average_rating: true,
+        created_at: true,
+        updated_at: true
+      }
+    });
+
+    if (!mentor) {
       return NextResponse.json(
         {
           error: {
@@ -53,7 +83,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    return NextResponse.json({ mentor: result.rows[0] });
+    return NextResponse.json({ mentor });
   } catch (error: any) {
     console.error('Get mentor profile error:', error);
     return NextResponse.json(
@@ -100,17 +130,32 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    const body = await request.json();
-    const { name, english_level, contact, timezone } = body;
+    // Support both old (mentor_id) and new (user_id) token formats
+    const mentorId = decoded.user_id || decoded.mentor_id;
 
-    const updates: string[] = [];
-    const params: any[] = [];
-    let paramCount = 1;
-
-    if (name) {
-      updates.push(`name = $${paramCount++}`);
-      params.push(name);
+    if (!mentorId || (decoded.user_type && decoded.user_type !== 'mentor')) {
+      return NextResponse.json(
+        {
+          error: {
+            message: 'Only mentors can access this endpoint',
+            code: 'FORBIDDEN',
+            meta: {}
+          }
+        },
+        { status: 403 }
+      );
     }
+
+    const body = await request.json();
+    const { name, english_level, contact, timezone, bio, hourly_rate } = body;
+
+    const updateData: any = {};
+
+    if (name) updateData.name = name;
+    if (contact !== undefined) updateData.contact = contact;
+    if (timezone) updateData.timezone = timezone;
+    if (bio !== undefined) updateData.bio = bio;
+    if (hourly_rate !== undefined) updateData.hourly_rate = hourly_rate;
 
     if (english_level) {
       const validLevels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
@@ -126,44 +171,47 @@ export async function PATCH(request: NextRequest) {
           { status: 400 }
         );
       }
-      updates.push(`english_level = $${paramCount++}`);
-      params.push(english_level);
+      updateData.english_level = english_level;
     }
 
-    if (contact !== undefined) {
-      updates.push(`contact = $${paramCount++}`);
-      params.push(contact);
-    }
-
-    if (timezone) {
-      updates.push(`timezone = $${paramCount++}`);
-      params.push(timezone);
-    }
-
-    if (updates.length === 0) {
+    if (Object.keys(updateData).length === 0) {
       return NextResponse.json(
         {
           error: {
             message: 'No fields to update',
             code: 'VALIDATION_ERROR',
-            meta: { allowed_fields: ['name', 'english_level', 'contact', 'timezone'] }
+            meta: { allowed_fields: ['name', 'english_level', 'contact', 'timezone', 'bio', 'hourly_rate'] }
           }
         },
         { status: 400 }
       );
     }
 
-    params.push(decoded.mentor_id);
+    const updated = await prisma.mentors.update({
+      where: { id: mentorId },
+      data: updateData,
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        english_level: true,
+        contact: true,
+        timezone: true,
+        status: true,
+        bio: true,
+        hourly_rate: true,
+        total_sessions: true,
+        average_rating: true,
+        created_at: true,
+        updated_at: true
+      }
+    });
 
-    const result = await pool.query(
-      `UPDATE mentors
-       SET ${updates.join(', ')}
-       WHERE id = $${paramCount}
-       RETURNING id, name, email, english_level, contact, timezone, status, created_at, updated_at`,
-      params
-    );
+    return NextResponse.json(updated);
+  } catch (error: any) {
+    console.error('Update mentor error:', error);
 
-    if (result.rows.length === 0) {
+    if (error.code === 'P2025') {
       return NextResponse.json(
         {
           error: {
@@ -176,9 +224,6 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    return NextResponse.json(result.rows[0]);
-  } catch (error: any) {
-    console.error('Update mentor error:', error);
     return NextResponse.json(
       {
         error: {

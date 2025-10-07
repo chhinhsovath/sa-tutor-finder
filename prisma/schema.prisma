@@ -1,0 +1,285 @@
+// Prisma schema for SA Tutor Finder
+// Database: PostgreSQL hosted on Prisma Cloud
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Enum for English proficiency levels
+enum EnglishLevel {
+  A1
+  A2
+  B1
+  B2
+  C1
+  C2
+}
+
+// Enum for user status
+enum UserStatus {
+  active
+  inactive
+  suspended
+}
+
+// Enum for mentor status (kept for backward compatibility)
+enum MentorStatus {
+  active
+  inactive
+}
+
+// Enum for session status
+enum SessionStatus {
+  pending       // Awaiting mentor confirmation
+  confirmed     // Mentor confirmed
+  completed     // Session finished
+  cancelled     // Cancelled by student or mentor
+  no_show       // Student didn't attend
+}
+
+// Enum for notification types
+enum NotificationType {
+  session_booked
+  session_confirmed
+  session_cancelled
+  session_reminder
+  message_received
+  review_received
+  system_announcement
+}
+
+// Enum for transaction types
+enum TransactionType {
+  session_payment
+  refund
+  subscription
+  credit_purchase
+}
+
+// Enum for transaction status
+enum TransactionStatus {
+  pending
+  completed
+  failed
+  refunded
+}
+
+// Enum for user roles (for role-based access control)
+enum UserRole {
+  student
+  mentor
+  counselor
+  admin
+}
+
+// Main mentor profile table
+model mentors {
+  id               String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name             String
+  email            String              @unique
+  password_hash    String
+  english_level    EnglishLevel
+  contact          String?
+  timezone         String              @default("Asia/Phnom_Penh")
+  status           MentorStatus        @default(active)
+  bio              String?             @db.Text
+  hourly_rate      Decimal?            @db.Decimal(10, 2)
+  total_sessions   Int                 @default(0)
+  average_rating   Decimal?            @db.Decimal(3, 2)
+  created_at       DateTime            @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime            @default(now()) @updatedAt @db.Timestamptz(6)
+
+  // Relations
+  availability_slots availability_slots[]
+  sessions           sessions[]
+  reviews            reviews[]
+
+  @@index([email])
+  @@index([english_level])
+  @@index([status])
+}
+
+// Weekly availability schedule for mentors
+model availability_slots {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  mentor_id     String   @db.Uuid
+  day_of_week   Int      // 1=Monday, 2=Tuesday, ..., 7=Sunday
+  start_time    DateTime @db.Time()
+  end_time      DateTime @db.Time()
+
+  // Relations
+  mentor        mentors  @relation(fields: [mentor_id], references: [id], onDelete: Cascade)
+
+  @@index([mentor_id])
+  @@index([day_of_week])
+}
+
+// Student/learner accounts
+model students {
+  id                String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name              String
+  email             String              @unique
+  password_hash     String
+  phone_number      String?
+  english_level     EnglishLevel        @default(A1)
+  learning_goals    String?             @db.Text
+  timezone          String              @default("Asia/Phnom_Penh")
+  status            UserStatus          @default(active)
+  total_sessions    Int                 @default(0)
+  created_at        DateTime            @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime            @default(now()) @updatedAt @db.Timestamptz(6)
+
+  // Relations
+  sessions          sessions[]
+  reviews           reviews[]
+  notifications     notifications[]
+  transactions      transactions[]
+
+  @@index([email])
+  @@index([status])
+}
+
+// Guidance counselor accounts
+model counselors {
+  id                String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name              String
+  email             String              @unique
+  password_hash     String
+  phone_number      String?
+  specialization    String?
+  timezone          String              @default("Asia/Phnom_Penh")
+  status            UserStatus          @default(active)
+  created_at        DateTime            @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime            @default(now()) @updatedAt @db.Timestamptz(6)
+
+  @@index([email])
+  @@index([status])
+}
+
+// Admin accounts
+model admins {
+  id                String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name              String
+  email             String              @unique
+  password_hash     String
+  role              UserRole            @default(admin)
+  status            UserStatus          @default(active)
+  created_at        DateTime            @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime            @default(now()) @updatedAt @db.Timestamptz(6)
+
+  @@index([email])
+}
+
+// Booked sessions between students and mentors
+model sessions {
+  id                String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  student_id        String              @db.Uuid
+  mentor_id         String              @db.Uuid
+  session_date      DateTime            @db.Date
+  start_time        DateTime            @db.Time()
+  end_time          DateTime            @db.Time()
+  duration_minutes  Int
+  status            SessionStatus       @default(pending)
+  notes             String?             @db.Text
+  cancellation_reason String?          @db.Text
+  mentor_feedback   String?             @db.Text
+  student_feedback  String?             @db.Text
+  created_at        DateTime            @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime            @default(now()) @updatedAt @db.Timestamptz(6)
+
+  // Relations
+  student           students            @relation(fields: [student_id], references: [id], onDelete: Cascade)
+  mentor            mentors             @relation(fields: [mentor_id], references: [id], onDelete: Cascade)
+  review            reviews?
+  transaction       transactions?
+
+  @@index([student_id])
+  @@index([mentor_id])
+  @@index([session_date])
+  @@index([status])
+}
+
+// 1-on-1 messaging between students and mentors
+// Note: This is a polymorphic relation - no foreign keys enforced
+model messages {
+  id                String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  sender_id         String              @db.Uuid
+  sender_type       UserRole            // student or mentor
+  recipient_id      String              @db.Uuid
+  recipient_type    UserRole            // student or mentor
+  content           String              @db.Text
+  is_read           Boolean             @default(false)
+  created_at        DateTime            @default(now()) @db.Timestamptz(6)
+
+  @@index([sender_id, recipient_id])
+  @@index([created_at])
+}
+
+// Reviews and ratings for mentors
+model reviews {
+  id                String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  session_id        String              @unique @db.Uuid
+  student_id        String              @db.Uuid
+  mentor_id         String              @db.Uuid
+  rating            Int                 // 1-5 stars
+  comment           String?             @db.Text
+  created_at        DateTime            @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime            @default(now()) @updatedAt @db.Timestamptz(6)
+
+  // Relations
+  session           sessions            @relation(fields: [session_id], references: [id], onDelete: Cascade)
+  student           students            @relation(fields: [student_id], references: [id], onDelete: Cascade)
+  mentor            mentors             @relation(fields: [mentor_id], references: [id], onDelete: Cascade)
+
+  @@index([mentor_id])
+  @@index([student_id])
+  @@index([rating])
+}
+
+// System notifications for users
+model notifications {
+  id                String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id           String              @db.Uuid
+  user_type         UserRole            // student, mentor, counselor, admin
+  type              NotificationType
+  title             String
+  content           String              @db.Text
+  is_read           Boolean             @default(false)
+  related_entity_id String?             @db.Uuid  // ID of session, message, etc.
+  created_at        DateTime            @default(now()) @db.Timestamptz(6)
+
+  // Relations (only student for now, can expand)
+  student           students?           @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id, is_read])
+  @@index([created_at])
+}
+
+// Financial transactions
+model transactions {
+  id                String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  student_id        String              @db.Uuid
+  session_id        String?             @unique @db.Uuid
+  type              TransactionType
+  amount            Decimal             @db.Decimal(10, 2)
+  currency          String              @default("USD")
+  status            TransactionStatus   @default(pending)
+  payment_method    String?
+  transaction_ref   String?             // External payment gateway reference
+  created_at        DateTime            @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime            @default(now()) @updatedAt @db.Timestamptz(6)
+
+  // Relations
+  student           students            @relation(fields: [student_id], references: [id], onDelete: Cascade)
+  session           sessions?           @relation(fields: [session_id], references: [id], onDelete: SetNull)
+
+  @@index([student_id])
+  @@index([session_id])
+  @@index([status])
+  @@index([created_at])
+}

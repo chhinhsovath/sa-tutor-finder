@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import pool from '@/lib/db';
+import prisma from '@/lib/prisma';
+
+export const dynamic = 'force-dynamic';
 
 export async function GET(
   request: NextRequest,
@@ -8,44 +10,74 @@ export async function GET(
   try {
     const { id } = params;
 
-    // Get mentor details
-    const mentorResult = await pool.query(
-      `SELECT id, name, email, english_level, contact, timezone, status, created_at, updated_at
-       FROM mentors
-       WHERE id = $1`,
-      [id]
-    );
+    const mentor = await prisma.mentors.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        english_level: true,
+        contact: true,
+        timezone: true,
+        status: true,
+        bio: true,
+        hourly_rate: true,
+        total_sessions: true,
+        average_rating: true,
+        created_at: true,
+        updated_at: true,
+        availability_slots: {
+          orderBy: [
+            { day_of_week: 'asc' },
+            { start_time: 'asc' }
+          ]
+        },
+        reviews: {
+          include: {
+            student: {
+              select: {
+                id: true,
+                name: true
+              }
+            }
+          },
+          orderBy: {
+            created_at: 'desc'
+          },
+          take: 10
+        }
+      }
+    });
 
-    if (mentorResult.rows.length === 0) {
+    if (!mentor) {
       return NextResponse.json(
         {
           error: {
             message: 'Mentor not found',
             code: 'MENTOR_NOT_FOUND',
-            meta: { mentor_id: id }
+            meta: { id }
           }
         },
         { status: 404 }
       );
     }
 
-    const mentor = mentorResult.rows[0];
+    if (mentor.status !== 'active') {
+      return NextResponse.json(
+        {
+          error: {
+            message: 'Mentor is not active',
+            code: 'MENTOR_INACTIVE',
+            meta: { status: mentor.status }
+          }
+        },
+        { status: 403 }
+      );
+    }
 
-    // Get availability slots
-    const slotsResult = await pool.query(
-      `SELECT id, day_of_week, start_time, end_time
-       FROM availability_slots
-       WHERE mentor_id = $1
-       ORDER BY day_of_week, start_time`,
-      [id]
-    );
-
-    return NextResponse.json({
-      ...mentor,
-      availability_slots: slotsResult.rows
-    });
+    return NextResponse.json({ mentor });
   } catch (error: any) {
-    console.error('Get mentor error:', error);
+    console.error('Get mentor detail error:', error);
     return NextResponse.json(
       {
         error: {

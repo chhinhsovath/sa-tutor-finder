@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import pool from '@/lib/db';
+import prisma from '@/lib/prisma';
+import { Prisma } from '@prisma/client';
 
 export const dynamic = 'force-dynamic';
 
@@ -11,47 +12,59 @@ export async function GET(request: NextRequest) {
     const to = searchParams.get('to');
     const level = searchParams.get('level');
 
-    let query = `
-      SELECT DISTINCT m.id, m.name, m.email, m.english_level, m.contact, m.timezone, m.status, m.created_at, m.updated_at
-      FROM mentors m
-    `;
-    const params: any[] = [];
-    const conditions: string[] = ['m.status = $1'];
-    params.push('active');
+    // Build where conditions
+    const whereConditions: Prisma.mentorsWhereInput = {
+      status: 'active'
+    };
 
-    // If filtering by availability
+    // Add english level filter
+    if (level) {
+      whereConditions.english_level = level as any;
+    }
+
+    // Add availability filters
     if (day || (from && to)) {
-      query += ' JOIN availability_slots s ON m.id = s.mentor_id';
+      const availabilityFilters: any = {};
 
       if (day) {
-        conditions.push(`s.day_of_week = $${params.length + 1}`);
-        params.push(parseInt(day));
+        availabilityFilters.day_of_week = parseInt(day);
       }
 
       if (from && to) {
-        conditions.push(`s.start_time < $${params.length + 1}`);
-        params.push(to);
-        conditions.push(`s.end_time > $${params.length + 1}`);
-        params.push(from);
+        // Time overlap: start_time < search_end AND end_time > search_start
+        availabilityFilters.start_time = {
+          lt: new Date(`1970-01-01T${to}:00`)
+        };
+        availabilityFilters.end_time = {
+          gt: new Date(`1970-01-01T${from}:00`)
+        };
       }
+
+      whereConditions.availability_slots = {
+        some: availabilityFilters
+      };
     }
 
-    if (level) {
-      conditions.push(`m.english_level = $${params.length + 1}`);
-      params.push(level);
-    }
+    // Fetch mentors with their availability slots
+    const mentors = await prisma.mentors.findMany({
+      where: whereConditions,
+      include: {
+        availability_slots: true
+      },
+      orderBy: {
+        created_at: 'desc'
+      }
+    });
 
-    if (conditions.length > 0) {
-      query += ' WHERE ' + conditions.join(' AND ');
-    }
-
-    query += ' ORDER BY m.created_at DESC';
-
-    const result = await pool.query(query, params);
+    // Format response (exclude password_hash if accidentally included)
+    const formattedMentors = mentors.map(mentor => {
+      const { password_hash, ...mentorWithoutPassword } = mentor;
+      return mentorWithoutPassword;
+    });
 
     return NextResponse.json({
-      mentors: result.rows,
-      count: result.rows.length
+      mentors: formattedMentors,
+      count: formattedMentors.length
     });
   } catch (error: any) {
     console.error('Get mentors error:', error);
