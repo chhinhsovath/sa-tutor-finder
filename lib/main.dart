@@ -4,8 +4,14 @@ import 'config/theme.dart';
 import 'providers/auth_provider.dart';
 import 'screens/login_screen.dart';
 import 'screens/main_dashboard_screen.dart';
+import 'services/storage_service.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize storage service
+  await StorageService().init();
+
   runApp(const MyApp());
 }
 

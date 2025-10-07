@@ -45,7 +45,8 @@ class AuthProvider with ChangeNotifier {
         contact: contact,
       );
 
-      _currentMentor = Mentor.fromJson(response['mentor']);
+      // API returns 'user' not 'mentor'
+      _currentMentor = Mentor.fromJson(response['user']);
       _isLoading = false;
       notifyListeners();
       return true;
@@ -71,7 +72,8 @@ class AuthProvider with ChangeNotifier {
         password: password,
       );
 
-      _currentMentor = Mentor.fromJson(response['mentor']);
+      // API returns 'user' not 'mentor' - works for all user types
+      _currentMentor = Mentor.fromJson(response['user']);
       _isLoading = false;
       notifyListeners();
       return true;

@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../config/api_config.dart';
 import '../models/mentor.dart';
+import 'storage_service.dart';
 
 class ApiService {
   final Dio _dio = Dio(BaseOptions(
@@ -10,21 +10,21 @@ class ApiService {
     receiveTimeout: const Duration(seconds: 10),
   ));
 
-  final FlutterSecureStorage _storage = const FlutterSecureStorage();
+  final StorageService _storage = StorageService();
 
-  // Save token to secure storage
+  // Save token to storage
   Future<void> saveToken(String token) async {
-    await _storage.write(key: 'auth_token', value: token);
+    await _storage.saveToken(token);
   }
 
-  // Get token from secure storage
+  // Get token from storage
   Future<String?> getToken() async {
-    return await _storage.read(key: 'auth_token');
+    return await _storage.getToken();
   }
 
   // Clear token
   Future<void> clearToken() async {
-    await _storage.delete(key: 'auth_token');
+    await _storage.clearToken();
   }
 
   // Add auth header if token exists
