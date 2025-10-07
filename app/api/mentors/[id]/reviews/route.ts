@@ -1,54 +1,80 @@
 import { NextRequest, NextResponse } from 'next/server';
-import pool from '@/lib/db';
+import prisma from '@/lib/prisma';
 
 export const dynamic = 'force-dynamic';
 
-// GET /api/mentors/[id]/reviews - Get all reviews for a mentor
+// GET /api/mentors/[id]/reviews - Get reviews for a mentor with pagination
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id: mentor_id } = await params;
+    const { searchParams } = new URL(request.url);
 
-    // Get reviews with student names
-    const result = await pool.query(
-      `SELECT r.*,
-              s.name as student_name
-       FROM reviews r
-       JOIN students s ON r.student_id = s.id
-       WHERE r.mentor_id = $1
-       ORDER BY r.created_at DESC`,
-      [mentor_id]
-    );
+    // Pagination parameters
+    const limit = parseInt(searchParams.get('limit') || '10');
+    const offset = parseInt(searchParams.get('offset') || '0');
+
+    // Get reviews with student names (paginated)
+    const [reviews, totalCount] = await Promise.all([
+      prisma.reviews.findMany({
+        where: { mentor_id },
+        include: {
+          student: {
+            select: { id: true, name: true }
+          }
+        },
+        orderBy: { created_at: 'desc' },
+        take: limit,
+        skip: offset
+      }),
+      prisma.reviews.count({ where: { mentor_id } })
+    ]);
 
     // Calculate average rating and distribution
-    const stats = await pool.query(
-      `SELECT
-         COUNT(*) as total_reviews,
-         AVG(rating) as average_rating,
-         COUNT(CASE WHEN rating = 5 THEN 1 END) as five_star,
-         COUNT(CASE WHEN rating = 4 THEN 1 END) as four_star,
-         COUNT(CASE WHEN rating = 3 THEN 1 END) as three_star,
-         COUNT(CASE WHEN rating = 2 THEN 1 END) as two_star,
-         COUNT(CASE WHEN rating = 1 THEN 1 END) as one_star
-       FROM reviews
-       WHERE mentor_id = $1`,
-      [mentor_id]
-    );
+    const allReviews = await prisma.reviews.findMany({
+      where: { mentor_id },
+      select: { rating: true }
+    });
+
+    const distribution = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+    let totalRating = 0;
+
+    allReviews.forEach(r => {
+      distribution[r.rating as keyof typeof distribution]++;
+      totalRating += r.rating;
+    });
+
+    const averageRating = allReviews.length > 0
+      ? (totalRating / allReviews.length).toFixed(1)
+      : '0.0';
+
+    // Format reviews to include student_name for compatibility
+    const formattedReviews = reviews.map(r => ({
+      id: r.id,
+      mentor_id: r.mentor_id,
+      student_id: r.student_id,
+      student_name: r.student.name,
+      session_id: r.session_id,
+      rating: r.rating,
+      comment: r.comment,
+      created_at: r.created_at,
+      updated_at: r.updated_at
+    }));
 
     return NextResponse.json({
-      reviews: result.rows,
+      reviews: formattedReviews,
       stats: {
-        total_reviews: parseInt(stats.rows[0].total_reviews),
-        average_rating: parseFloat(stats.rows[0].average_rating || 0).toFixed(1),
-        distribution: {
-          5: parseInt(stats.rows[0].five_star),
-          4: parseInt(stats.rows[0].four_star),
-          3: parseInt(stats.rows[0].three_star),
-          2: parseInt(stats.rows[0].two_star),
-          1: parseInt(stats.rows[0].one_star)
-        }
+        total_reviews: totalCount,
+        average_rating: averageRating,
+        distribution
+      },
+      pagination: {
+        total: totalCount,
+        limit,
+        offset,
+        hasMore: offset + reviews.length < totalCount
       }
     });
   } catch (error: any) {

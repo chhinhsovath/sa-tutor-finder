@@ -283,3 +283,59 @@ model transactions {
   @@index([status])
   @@index([created_at])
 }
+
+// Notification preferences for users
+model notification_preferences {
+  id                        String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id                   String              @db.Uuid
+  user_type                 UserRole
+  email_notifications       Boolean             @default(true)
+  push_notifications        Boolean             @default(true)
+  session_reminders         Boolean             @default(true)
+  message_notifications     Boolean             @default(true)
+  review_notifications      Boolean             @default(true)
+  marketing_emails          Boolean             @default(false)
+  created_at                DateTime            @default(now()) @db.Timestamptz(6)
+  updated_at                DateTime            @default(now()) @updatedAt @db.Timestamptz(6)
+
+  @@unique([user_id, user_type])
+  @@index([user_id])
+}
+
+// Support tickets for help/support system
+model support_tickets {
+  id                String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id           String              @db.Uuid
+  user_type         UserRole
+  subject           String
+  description       String              @db.Text
+  status            String              @default("open") // open, in_progress, resolved, closed
+  priority          String              @default("normal") // low, normal, high, urgent
+  category          String?             // technical, billing, general, feedback
+  assigned_to       String?             @db.Uuid // admin user id
+  resolution_notes  String?             @db.Text
+  created_at        DateTime            @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime            @default(now()) @updatedAt @db.Timestamptz(6)
+  resolved_at       DateTime?           @db.Timestamptz(6)
+
+  @@index([user_id])
+  @@index([status])
+  @@index([created_at])
+}
+
+// FAQ (Frequently Asked Questions)
+model faq {
+  id                String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  category          String              // getting_started, sessions, payments, technical, etc.
+  question          String              @db.Text
+  answer            String              @db.Text
+  order             Int                 @default(0)
+  is_published      Boolean             @default(true)
+  view_count        Int                 @default(0)
+  created_at        DateTime            @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime            @default(now()) @updatedAt @db.Timestamptz(6)
+
+  @@index([category])
+  @@index([is_published])
+  @@index([order])
+}
