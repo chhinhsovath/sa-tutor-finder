@@ -343,9 +343,9 @@ class HomeScreen extends StatelessWidget {
         'items': [
           {
             'title': 'Session Feedback',
-            'description': 'Provide feedback after completing sessions',
+            'description': 'Provide feedback after completing sessions (available after sessions)',
             'icon': Icons.feedback,
-            'route': const SessionFeedbackScreen(),
+            'route': null, // Requires sessionId - available from session list
           },
         ],
       },
@@ -415,15 +415,15 @@ class HomeScreen extends StatelessWidget {
         'items': [
           {
             'title': 'Session Booking',
-            'description': 'Calendar view - select date/time for session',
+            'description': 'Calendar view - select date/time (available from mentor detail)',
             'icon': Icons.book_online,
-            'route': const SessionBookingScreen(),
+            'route': null, // Requires mentorId - available from mentor detail screen
           },
           {
             'title': 'Rate Mentor',
-            'description': 'Give 1-5 star rating after session',
+            'description': 'Give 1-5 star rating (available after sessions)',
             'icon': Icons.rate_review,
-            'route': const RateMentorScreen(),
+            'route': null, // Requires sessionId/mentorId - available from completed sessions
           },
         ],
       },
