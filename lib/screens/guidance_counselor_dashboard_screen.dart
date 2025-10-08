@@ -1,200 +1,283 @@
 import 'package:flutter/material.dart';
+import '../services/api_service.dart';
+import '../models/counselor_dashboard.dart';
 
-class GuidanceCounselorDashboardScreen extends StatelessWidget {
+class GuidanceCounselorDashboardScreen extends StatefulWidget {
   const GuidanceCounselorDashboardScreen({super.key});
+
+  @override
+  State<GuidanceCounselorDashboardScreen> createState() => _GuidanceCounselorDashboardScreenState();
+}
+
+class _GuidanceCounselorDashboardScreenState extends State<GuidanceCounselorDashboardScreen> {
+  final ApiService _apiService = ApiService();
+  CounselorDashboard? _dashboard;
+  bool _isLoading = true;
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadDashboard();
+  }
+
+  Future<void> _loadDashboard() async {
+    try {
+      setState(() {
+        _isLoading = true;
+        _error = null;
+      });
+      final dashboard = await _apiService.getCounselorDashboard();
+      setState(() {
+        _dashboard = dashboard;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _error = e.toString();
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    final students = [
-      {'name': 'Sophia Carter', 'grade': '12th Grade'},
-      {'name': 'Ethan Walker', 'grade': '11th Grade'},
-      {'name': 'Olivia Bennett', 'grade': '10th Grade'},
-    ];
-
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.menu),
-          onPressed: () {
-            // TODO: Open drawer
-          },
+          onPressed: () {},
         ),
-        title: const Text('Dashboard'),
+        title: const Text('Counselor Dashboard'),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // My Students section
-            Text(
-              'My Students',
-              style: theme.textTheme.headlineSmall,
-            ),
-            const SizedBox(height: 16),
-            SizedBox(
-              height: 200,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: students.length,
-                itemBuilder: (context, index) {
-                  final student = students[index];
-                  return _buildStudentCard(student, theme);
-                },
-              ),
-            ),
-            const SizedBox(height: 32),
-
-            // Quick Actions
-            Text(
-              'Quick Actions',
-              style: theme.textTheme.headlineSmall,
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      // TODO: Recommend mentors
-                    },
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                    ),
-                    child: const Text('Recommend Mentors'),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _error != null
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('Error loading dashboard', style: theme.textTheme.titleMedium),
+                      const SizedBox(height: 8),
+                      Text(_error!, style: theme.textTheme.bodySmall),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: _loadDashboard,
+                        child: const Text('Retry'),
+                      ),
+                    ],
                   ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () {
-                      // TODO: View reports
-                    },
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      side: BorderSide(color: theme.colorScheme.primary),
-                      foregroundColor: theme.colorScheme.primary,
-                    ),
-                    child: const Text('View Reports'),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 32),
-
-            // Student Management
-            Text(
-              'Student Management',
-              style: theme.textTheme.headlineSmall,
-            ),
-            const SizedBox(height: 16),
-            Container(
-              decoration: BoxDecoration(
-                color: theme.cardColor,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(12),
-                  onTap: () {
-                    // TODO: Navigate to student accounts
-                  },
-                  child: Padding(
+                )
+              : RefreshIndicator(
+                  onRefresh: _loadDashboard,
+                  child: SingleChildScrollView(
                     padding: const EdgeInsets.all(16),
-                    child: Row(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
-                          width: 48,
-                          height: 48,
-                          decoration: BoxDecoration(
-                            color: theme.colorScheme.primary.withOpacity(0.1),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            Icons.group,
-                            color: theme.colorScheme.primary,
-                          ),
+                        // Welcome
+                        Text(
+                          'Welcome, ${_dashboard!.counselor.name}',
+                          style: theme.textTheme.headlineMedium,
                         ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Student Accounts',
-                                style: theme.textTheme.titleMedium,
-                              ),
-                              Text(
-                                'Manage student accounts and access aggregate data',
-                                style: theme.textTheme.bodySmall,
-                              ),
-                            ],
+                        if (_dashboard!.counselor.specialization != null)
+                          Text(
+                            _dashboard!.counselor.specialization!,
+                            style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey),
                           ),
+                        const SizedBox(height: 24),
+
+                        // Statistics Grid
+                        Text('Platform Statistics', style: theme.textTheme.titleLarge),
+                        const SizedBox(height: 12),
+                        GridView.count(
+                          shrinkWrap: true,
+                          crossAxisCount: 2,
+                          mainAxisSpacing: 12,
+                          crossAxisSpacing: 12,
+                          childAspectRatio: 1.5,
+                          physics: const NeverScrollableScrollPhysics(),
+                          children: [
+                            _buildStatCard(Icons.school, 'Students', '${_dashboard!.statistics.totalStudents}', theme),
+                            _buildStatCard(Icons.person, 'Mentors', '${_dashboard!.statistics.totalMentors}', theme),
+                            _buildStatCard(Icons.event, 'Sessions', '${_dashboard!.statistics.totalSessions}', theme),
+                            _buildStatCard(Icons.star, 'Avg Rating', _dashboard!.statistics.averageRating.toStringAsFixed(1), theme),
+                          ],
                         ),
-                        Icon(
-                          Icons.chevron_right,
-                          color: theme.textTheme.bodySmall?.color,
+                        const SizedBox(height: 24),
+
+                        // Students Needing Attention
+                        Text('Students Needing Attention', style: theme.textTheme.titleLarge),
+                        const SizedBox(height: 12),
+                        if (_dashboard!.studentsNeedingAttention.isEmpty)
+                          Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(32),
+                              child: Text('All students are doing well!', style: theme.textTheme.bodyMedium?.copyWith(color: Colors.grey)),
+                            ),
+                          )
+                        else
+                          ..._dashboard!.studentsNeedingAttention.take(5).map((student) => Padding(
+                                padding: const EdgeInsets.only(bottom: 8),
+                                child: _buildStudentCard(student, theme),
+                              )),
+                        const SizedBox(height: 24),
+
+                        // Recent Sessions
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Recent Sessions', style: theme.textTheme.titleLarge),
+                            TextButton(
+                              onPressed: () {},
+                              child: const Text('View All'),
+                            ),
+                          ],
                         ),
+                        const SizedBox(height: 12),
+                        ..._dashboard!.recentSessions.take(5).map((session) => Padding(
+                              padding: const EdgeInsets.only(bottom: 8),
+                              child: _buildSessionCard(session, theme),
+                            )),
                       ],
                     ),
                   ),
                 ),
-              ),
-            ),
-          ],
-        ),
+    );
+  }
+
+  Widget _buildStatCard(IconData icon, String title, String value, ThemeData theme) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: theme.cardColor,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, color: theme.colorScheme.primary, size: 32),
+          const SizedBox(height: 8),
+          Text(value, style: theme.textTheme.headlineSmall),
+          Text(title, style: theme.textTheme.bodySmall),
+        ],
       ),
     );
   }
 
-  Widget _buildStudentCard(Map<String, String> student, ThemeData theme) {
+  Widget _buildStudentCard(StudentNeedingAttention student, ThemeData theme) {
     return Container(
-      width: 160,
-      margin: const EdgeInsets.only(right: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: theme.cardColor,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
         children: [
+          CircleAvatar(
+            radius: 24,
+            backgroundColor: Colors.orange.withOpacity(0.1),
+            child: Icon(Icons.person, color: Colors.orange),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(student.name, style: theme.textTheme.titleMedium),
+                Text('Level: ${student.englishLevel} • ${student.totalSessions} sessions', style: theme.textTheme.bodySmall),
+              ],
+            ),
+          ),
           Container(
-            height: 140,
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color: theme.colorScheme.primary.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
+              color: Colors.orange.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
             ),
-            child: Center(
-              child: Text(
-                student['name']!.substring(0, 1),
-                style: TextStyle(
-                  fontSize: 48,
-                  fontWeight: FontWeight.bold,
-                  color: theme.colorScheme.primary,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            student['name']!,
-            style: theme.textTheme.titleMedium,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          Text(
-            student['grade']!,
-            style: theme.textTheme.bodySmall,
+            child: const Text('Needs Help', style: TextStyle(fontSize: 12, color: Colors.orange)),
           ),
         ],
       ),
     );
+  }
+
+  Widget _buildSessionCard(RecentSession session, ThemeData theme) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: theme.cardColor,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 20,
+            backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
+            child: Icon(Icons.event, color: theme.colorScheme.primary, size: 20),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('${session.studentName} ↔ ${session.mentorName}', style: theme.textTheme.titleSmall),
+                Text(session.sessionDate, style: theme.textTheme.bodySmall),
+              ],
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: _getStatusColor(session.status).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              session.status.toUpperCase(),
+              style: TextStyle(fontSize: 11, color: _getStatusColor(session.status), fontWeight: FontWeight.w600),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Color _getStatusColor(String status) {
+    switch (status) {
+      case 'confirmed':
+        return Colors.green;
+      case 'pending':
+        return Colors.orange;
+      case 'completed':
+        return Colors.blue;
+      case 'cancelled':
+        return Colors.red;
+      default:
+        return Colors.grey;
+    }
   }
 }

@@ -6,6 +6,7 @@ import '../models/session.dart';
 import '../models/message.dart';
 import '../models/notification.dart';
 import '../models/progress.dart';
+import '../models/counselor_dashboard.dart';
 import 'storage_service.dart';
 
 class ApiService {
@@ -470,6 +471,22 @@ class ApiService {
       final response = await _dio.get(ApiConfig.mentorReviews(mentorId));
       final List reviewsList = response.data['reviews'];
       return reviewsList.cast<Map<String, dynamic>>();
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  // === COUNSELOR ENDPOINTS ===
+
+  // Get counselor dashboard
+  Future<CounselorDashboard> getCounselorDashboard() async {
+    try {
+      final options = await _getAuthOptions();
+      final response = await _dio.get(
+        ApiConfig.counselorDashboard,
+        options: options,
+      );
+      return CounselorDashboard.fromJson(response.data);
     } on DioException catch (e) {
       throw _handleError(e);
     }
