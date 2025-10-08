@@ -39,20 +39,26 @@ class Session {
 
   factory Session.fromJson(Map<String, dynamic> json) {
     return Session(
-      id: json['id'],
-      studentId: json['student_id'],
-      mentorId: json['mentor_id'],
-      sessionDate: DateTime.parse(json['session_date']),
-      startTime: json['start_time'],
-      endTime: json['end_time'],
-      durationMinutes: json['duration_minutes'],
-      status: json['status'],
+      id: json['id'] ?? '',
+      studentId: json['student_id'] ?? '',
+      mentorId: json['mentor_id'] ?? '',
+      sessionDate: json['session_date'] != null
+          ? DateTime.parse(json['session_date'])
+          : DateTime.now(),
+      startTime: json['start_time'] ?? '',
+      endTime: json['end_time'] ?? '',
+      durationMinutes: json['duration_minutes'] ?? 0,
+      status: json['status'] ?? 'pending',
       notes: json['notes'],
       cancellationReason: json['cancellation_reason'],
       mentorFeedback: json['mentor_feedback'],
       studentFeedback: json['student_feedback'],
-      createdAt: DateTime.parse(json['created_at']),
-      updatedAt: DateTime.parse(json['updated_at']),
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'])
+          : DateTime.now(),
+      updatedAt: json['updated_at'] != null
+          ? DateTime.parse(json['updated_at'])
+          : DateTime.now(),
       mentorName: json['mentor_name'],
       studentName: json['student_name'],
     );

@@ -23,8 +23,8 @@ class StudentProgress {
 
   factory StudentProgress.fromJson(Map<String, dynamic> json) {
     return StudentProgress(
-      studentId: json['student_id'],
-      studentName: json['student_name'],
+      studentId: json['student_id'] ?? '',
+      studentName: json['student_name'] ?? 'Student',
       currentLevel: json['current_level'] ?? 'A1',
       totalSessions: json['total_sessions'] ?? 0,
       completedSessions: json['completed_sessions'] ?? 0,
