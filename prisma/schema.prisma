@@ -91,6 +91,14 @@ model mentors {
   hourly_rate      Decimal?            @db.Decimal(10, 2)
   total_sessions   Int                 @default(0)
   average_rating   Decimal?            @db.Decimal(3, 2)
+
+  // Location fields for in-person tutoring
+  address                String?
+  latitude               Decimal?            @db.Decimal(10, 8)
+  longitude              Decimal?            @db.Decimal(11, 8)
+  offers_in_person       Boolean             @default(false)
+  max_travel_distance_km Int?                // How far mentor is willing to travel
+
   created_at       DateTime            @default(now()) @db.Timestamptz(6)
   updated_at       DateTime            @default(now()) @updatedAt @db.Timestamptz(6)
 
@@ -102,6 +110,7 @@ model mentors {
   @@index([email])
   @@index([english_level])
   @@index([status])
+  @@index([latitude, longitude])
 }
 
 // Weekly availability schedule for mentors
@@ -131,6 +140,15 @@ model students {
   timezone          String              @default("Asia/Phnom_Penh")
   status            UserStatus          @default(active)
   total_sessions    Int                 @default(0)
+
+  // Location fields for proximity-based mentor search
+  home_address      String?
+  home_latitude     Decimal?            @db.Decimal(10, 8)
+  home_longitude    Decimal?            @db.Decimal(11, 8)
+  school_address    String?
+  school_latitude   Decimal?            @db.Decimal(10, 8)
+  school_longitude  Decimal?            @db.Decimal(11, 8)
+
   created_at        DateTime            @default(now()) @db.Timestamptz(6)
   updated_at        DateTime            @default(now()) @updatedAt @db.Timestamptz(6)
 
@@ -142,6 +160,8 @@ model students {
 
   @@index([email])
   @@index([status])
+  @@index([home_latitude, home_longitude])
+  @@index([school_latitude, school_longitude])
 }
 
 // Guidance counselor accounts
