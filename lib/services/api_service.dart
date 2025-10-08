@@ -127,7 +127,7 @@ class ApiService {
   Future<Mentor> getMentorDetail(String id) async {
     try {
       final response = await _dio.get(ApiConfig.mentorDetail(id));
-      return Mentor.fromJson(response.data);
+      return Mentor.fromJson(response.data['mentor']);
     } on DioException catch (e) {
       throw _handleError(e);
     }
