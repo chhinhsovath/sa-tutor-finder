@@ -9,7 +9,8 @@
     "build:flutter": "flutter build web --release --base-href /app/ && rm -rf public/app && mkdir -p public/app && cp -r build/web/* public/app/",
     "build:all": "npm run build:flutter && npm run build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "postinstall": "prisma generate"
   },
   "keywords": [],
   "author": "",
