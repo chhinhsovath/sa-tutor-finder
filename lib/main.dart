@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'config/theme.dart';
 import 'providers/auth_provider.dart';
 import 'screens/login_screen.dart';
-import 'screens/main_dashboard_screen.dart';
+import 'screens/home_screen.dart';
 import 'screens/mentor_search_screen.dart';
 import 'screens/mentor_detail_screen.dart';
 import 'screens/availability_management_screen.dart';
@@ -91,7 +91,7 @@ class AuthChecker extends StatelessWidget {
         }
 
         if (authProvider.isAuthenticated) {
-          return const MainDashboardScreen();
+          return const HomeScreen();
         }
 
         return const LoginScreen();

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
-import 'mentor_search_screen.dart';
+import 'home_screen.dart';
 
 enum UserRole { student, mentor, guidance }
 
@@ -65,7 +65,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
     if (success && mounted) {
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const MentorSearchScreen()),
+        MaterialPageRoute(builder: (_) => const HomeScreen()),
       );
     } else if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
