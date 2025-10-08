@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/auth_provider.dart';
 import '../services/api_service.dart';
 import '../models/counselor_dashboard.dart';
+import 'login_screen.dart';
 
 class GuidanceCounselorDashboardScreen extends StatefulWidget {
   const GuidanceCounselorDashboardScreen({super.key});
@@ -48,6 +51,27 @@ class _GuidanceCounselorDashboardScreenState extends State<GuidanceCounselorDash
       appBar: AppBar(
         title: const Text('Counselor Dashboard'),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.notifications_outlined),
+            onPressed: () {
+              // TODO: Navigate to notifications
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () async {
+              final authProvider = Provider.of<AuthProvider>(context, listen: false);
+              await authProvider.logout();
+              if (mounted) {
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (_) => const LoginScreen()),
+                  (route) => false,
+                );
+              }
+            },
+          ),
+        ],
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())

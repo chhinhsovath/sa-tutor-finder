@@ -5,7 +5,7 @@ class LoginSignupTransitionAnimationScreen extends StatefulWidget {
   _LoginSignupTransitionAnimationScreenState createState() => _LoginSignupTransitionAnimationScreenState();
 }
 
-class _LoginSignupTransitionAnimationScreenState extends State<LoginSignupTransitionAnimationScreen>
+class _LoginSignupTransitionAnimationScreenState extends iState<LoginSignupTransitionAnimationScreen>
     with TickerProviderStateMixin {
   bool isLogin = true;
   late AnimationController _controller;
