@@ -62,12 +62,6 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.menu),
-          onPressed: () {
-            // TODO: Open drawer
-          },
-        ),
         title: const Text('Dashboard'),
         centerTitle: true,
         actions: [

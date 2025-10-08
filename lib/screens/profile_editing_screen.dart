@@ -85,14 +85,6 @@ class _ProfileEditingScreenState extends State<ProfileEditingScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            if (Navigator.of(context).canPop()) {
-              Navigator.of(context).pop();
-            }
-          },
-        ),
         title: const Text('Edit Profile'),
         centerTitle: true,
       ),

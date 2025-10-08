@@ -46,10 +46,6 @@ class _GuidanceCounselorDashboardScreenState extends State<GuidanceCounselorDash
 
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.menu),
-          onPressed: () {},
-        ),
         title: const Text('Counselor Dashboard'),
         centerTitle: true,
       ),

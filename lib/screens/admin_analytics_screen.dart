@@ -46,10 +46,6 @@ class _AdminAnalyticsScreenState extends State<AdminAnalyticsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.menu),
-          onPressed: () {},
-        ),
         title: const Text('Admin Analytics'),
         centerTitle: true,
         actions: [
