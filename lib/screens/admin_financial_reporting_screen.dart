@@ -1,7 +1,50 @@
 import 'package:flutter/material.dart';
+import '../services/api_service.dart';
+import '../models/financial.dart';
 
-class AdminFinancialReportingScreen extends StatelessWidget {
+class AdminFinancialReportingScreen extends StatefulWidget {
   const AdminFinancialReportingScreen({super.key});
+
+  @override
+  State<AdminFinancialReportingScreen> createState() => _AdminFinancialReportingScreenState();
+}
+
+class _AdminFinancialReportingScreenState extends State<AdminFinancialReportingScreen> {
+  final ApiService _apiService = ApiService();
+
+  TransactionSummary? _summary;
+  List<Transaction> _transactions = [];
+  bool _isLoading = true;
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    try {
+      setState(() {
+        _isLoading = true;
+        _error = null;
+      });
+
+      final summary = await _apiService.getAdminTransactionSummary();
+      final transactions = await _apiService.getAdminTransactions(limit: 10);
+
+      setState(() {
+        _summary = summary;
+        _transactions = transactions;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _error = e.toString();
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,74 +58,110 @@ class AdminFinancialReportingScreen extends StatelessWidget {
         ),
         title: const Text('Financial Reports'),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: _loadData,
+          ),
+        ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Summary cards
-            Row(
-              children: [
-                Expanded(
-                  child: _buildStatCard(
-                    'Total Revenue',
-                    '\$12,450',
-                    Icons.trending_up,
-                    const Color(0xFF10B981),
-                    theme,
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _error != null
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('Error loading financial data', style: theme.textTheme.titleMedium),
+                      const SizedBox(height: 8),
+                      Text(_error!, style: theme.textTheme.bodySmall),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: _loadData,
+                        child: const Text('Retry'),
+                      ),
+                    ],
                   ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildStatCard(
-                    'This Month',
-                    '\$2,340',
-                    Icons.calendar_today,
-                    theme.colorScheme.primary,
-                    theme,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildStatCard(
-                    'Sessions',
-                    '156',
-                    Icons.videocam,
-                    const Color(0xFFF59E0B),
-                    theme,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildStatCard(
-                    'Pending',
-                    '\$340',
-                    Icons.pending,
-                    const Color(0xFF8B5CF6),
-                    theme,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 32),
+                )
+              : RefreshIndicator(
+                  onRefresh: _loadData,
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Summary cards
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _buildStatCard(
+                                'Total Revenue',
+                                '\$${_summary!.totalRevenue.toStringAsFixed(2)}',
+                                Icons.trending_up,
+                                const Color(0xFF10B981),
+                                theme,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: _buildStatCard(
+                                'Net Revenue',
+                                '\$${_summary!.netRevenue.toStringAsFixed(2)}',
+                                Icons.account_balance,
+                                theme.colorScheme.primary,
+                                theme,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _buildStatCard(
+                                'Completed',
+                                '${_summary!.completedTransactions}',
+                                Icons.check_circle,
+                                const Color(0xFF10B981),
+                                theme,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: _buildStatCard(
+                                'Pending',
+                                '\$${_summary!.pendingRevenue.toStringAsFixed(2)}',
+                                Icons.pending,
+                                const Color(0xFFF59E0B),
+                                theme,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 32),
 
-            // Recent transactions
-            Text(
-              'Recent Transactions',
-              style: theme.textTheme.titleLarge,
-            ),
-            const SizedBox(height: 16),
-            _buildTransactionCard('Session with Sarah J.', '\$80', 'Completed', theme),
-            _buildTransactionCard('Session with Michael C.', '\$80', 'Completed', theme),
-            _buildTransactionCard('Session with Emily R.', '\$80', 'Pending', theme),
-          ],
-        ),
-      ),
+                        // Recent transactions
+                        Text(
+                          'Recent Transactions',
+                          style: theme.textTheme.titleLarge,
+                        ),
+                        const SizedBox(height: 16),
+                        if (_transactions.isEmpty)
+                          Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(32),
+                              child: Text(
+                                'No transactions yet',
+                                style: theme.textTheme.bodyMedium?.copyWith(color: Colors.grey),
+                              ),
+                            ),
+                          )
+                        else
+                          ..._transactions.map((transaction) => _buildTransactionCard(transaction, theme)),
+                      ],
+                    ),
+                  ),
+                ),
     );
   }
 
@@ -121,8 +200,18 @@ class AdminFinancialReportingScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTransactionCard(String title, String amount, String status, ThemeData theme) {
-    final isPending = status == 'Pending';
+  Widget _buildTransactionCard(Transaction transaction, ThemeData theme) {
+    final isPending = transaction.status == 'pending';
+    final isCompleted = transaction.status == 'completed';
+
+    Color statusColor;
+    if (isCompleted) {
+      statusColor = const Color(0xFF10B981);
+    } else if (isPending) {
+      statusColor = const Color(0xFFF59E0B);
+    } else {
+      statusColor = Colors.grey;
+    }
 
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
@@ -130,6 +219,13 @@ class AdminFinancialReportingScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: theme.cardColor,
         borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         children: [
@@ -150,21 +246,22 @@ class AdminFinancialReportingScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  title,
+                  transaction.displayTitle,
                   style: theme.textTheme.titleMedium,
                 ),
                 Text(
-                  status,
+                  transaction.status.toUpperCase(),
                   style: TextStyle(
                     fontSize: 12,
-                    color: isPending ? const Color(0xFFF59E0B) : const Color(0xFF10B981),
+                    color: statusColor,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ],
             ),
           ),
           Text(
-            amount,
+            '\$${transaction.amount.toStringAsFixed(2)}',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,

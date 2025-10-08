@@ -7,6 +7,9 @@ import '../models/message.dart';
 import '../models/notification.dart';
 import '../models/progress.dart';
 import '../models/counselor_dashboard.dart';
+import '../models/admin_analytics.dart';
+import '../models/counselor.dart';
+import '../models/financial.dart';
 import 'storage_service.dart';
 
 class ApiService {
@@ -487,6 +490,81 @@ class ApiService {
         options: options,
       );
       return CounselorDashboard.fromJson(response.data);
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  // === ADMIN ENDPOINTS ===
+
+  // Get admin analytics
+  Future<AdminAnalytics> getAdminAnalytics() async {
+    try {
+      final options = await _getAuthOptions();
+      final response = await _dio.get(
+        ApiConfig.adminAnalytics,
+        options: options,
+      );
+      return AdminAnalytics.fromJson(response.data);
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  // Get all students (admin only)
+  Future<List<Student>> getAdminStudents() async {
+    try {
+      final options = await _getAuthOptions();
+      final response = await _dio.get(
+        ApiConfig.adminStudents,
+        options: options,
+      );
+      final List studentsList = response.data['students'];
+      return studentsList.map((json) => Student.fromJson(json)).toList();
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  // Get all counselors (admin only)
+  Future<List<Counselor>> getAdminCounselors() async {
+    try {
+      final options = await _getAuthOptions();
+      final response = await _dio.get(
+        ApiConfig.adminCounselors,
+        options: options,
+      );
+      final List counselorsList = response.data['counselors'];
+      return counselorsList.map((json) => Counselor.fromJson(json)).toList();
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  // Get transaction summary (admin only)
+  Future<TransactionSummary> getAdminTransactionSummary() async {
+    try {
+      final options = await _getAuthOptions();
+      final response = await _dio.get(
+        ApiConfig.adminTransactionsSummary,
+        options: options,
+      );
+      return TransactionSummary.fromJson(response.data);
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  // Get transactions (admin only)
+  Future<List<Transaction>> getAdminTransactions({int limit = 20}) async {
+    try {
+      final options = await _getAuthOptions();
+      final response = await _dio.get(
+        '${ApiConfig.adminTransactions}?limit=$limit',
+        options: options,
+      );
+      final List transactionsList = response.data['transactions'];
+      return transactionsList.map((json) => Transaction.fromJson(json)).toList();
     } on DioException catch (e) {
       throw _handleError(e);
     }

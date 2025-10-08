@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../services/api_service.dart';
+import '../models/mentor.dart';
 
 class AdminMentorManagementScreen extends StatefulWidget {
   const AdminMentorManagementScreen({super.key});
@@ -8,7 +10,22 @@ class AdminMentorManagementScreen extends StatefulWidget {
 }
 
 class _AdminMentorManagementScreenState extends State<AdminMentorManagementScreen> {
+  final ApiService _apiService = ApiService();
   final TextEditingController _searchController = TextEditingController();
+
+  List<Mentor> _allMentors = [];
+  List<Mentor> _filteredMentors = [];
+  bool _isLoading = true;
+  String? _error;
+  String? _levelFilter;
+  String? _statusFilter;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadMentors();
+    _searchController.addListener(_applyFilters);
+  }
 
   @override
   void dispose() {
@@ -16,15 +33,41 @@ class _AdminMentorManagementScreenState extends State<AdminMentorManagementScree
     super.dispose();
   }
 
+  Future<void> _loadMentors() async {
+    try {
+      setState(() {
+        _isLoading = true;
+        _error = null;
+      });
+      final mentors = await _apiService.getMentors();
+      setState(() {
+        _allMentors = mentors;
+        _applyFilters();
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _error = e.toString();
+        _isLoading = false;
+      });
+    }
+  }
+
+  void _applyFilters() {
+    setState(() {
+      _filteredMentors = _allMentors.where((mentor) {
+        final matchesSearch = _searchController.text.isEmpty ||
+            mentor.name.toLowerCase().contains(_searchController.text.toLowerCase());
+        final matchesLevel = _levelFilter == null || mentor.english_level == _levelFilter;
+        final matchesStatus = _statusFilter == null || mentor.status == _statusFilter;
+        return matchesSearch && matchesLevel && matchesStatus;
+      }).toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
-    final mentors = [
-      {'name': 'Ethan Carter', 'level': 'Advanced', 'status': 'Active'},
-      {'name': 'Sarah Johnson', 'level': 'Intermediate', 'status': 'Active'},
-      {'name': 'Michael Chen', 'level': 'Advanced', 'status': 'Inactive'},
-    ];
 
     return Scaffold(
       appBar: AppBar(
@@ -34,79 +77,178 @@ class _AdminMentorManagementScreenState extends State<AdminMentorManagementScree
         ),
         title: const Text('Mentors'),
         centerTitle: true,
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                // Search bar
-                TextField(
-                  controller: _searchController,
-                  decoration: InputDecoration(
-                    hintText: 'Search mentors',
-                    prefixIcon: const Icon(Icons.search),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                // Filters
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        onPressed: () {
-                          // TODO: Show English level filter
-                        },
-                        icon: const Icon(Icons.arrow_drop_down),
-                        label: const Text('English Level'),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        onPressed: () {
-                          // TODO: Show status filter
-                        },
-                        icon: const Icon(Icons.arrow_drop_down),
-                        label: const Text('Status'),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-
-          // Mentors list
-          Expanded(
-            child: ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              itemCount: mentors.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 8),
-              itemBuilder: (context, index) {
-                final mentor = mentors[index];
-                return _buildMentorCard(mentor, theme);
-              },
-            ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: _loadMentors,
           ),
         ],
       ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _error != null
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('Error loading mentors', style: theme.textTheme.titleMedium),
+                      const SizedBox(height: 8),
+                      Text(_error!, style: theme.textTheme.bodySmall),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: _loadMentors,
+                        child: const Text('Retry'),
+                      ),
+                    ],
+                  ),
+                )
+              : Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        children: [
+                          // Search bar
+                          TextField(
+                            controller: _searchController,
+                            decoration: InputDecoration(
+                              hintText: 'Search mentors',
+                              prefixIcon: const Icon(Icons.search),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Filters
+                          Row(
+                            children: [
+                              Expanded(
+                                child: OutlinedButton.icon(
+                                  onPressed: () => _showLevelFilter(theme),
+                                  icon: const Icon(Icons.arrow_drop_down),
+                                  label: Text(_levelFilter ?? 'English Level'),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: OutlinedButton.icon(
+                                  onPressed: () => _showStatusFilter(theme),
+                                  icon: const Icon(Icons.arrow_drop_down),
+                                  label: Text(_statusFilter ?? 'Status'),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Mentors list
+                    Expanded(
+                      child: _filteredMentors.isEmpty
+                          ? Center(
+                              child: Text(
+                                'No mentors found',
+                                style: theme.textTheme.bodyMedium?.copyWith(color: Colors.grey),
+                              ),
+                            )
+                          : RefreshIndicator(
+                              onRefresh: _loadMentors,
+                              child: ListView.separated(
+                                padding: const EdgeInsets.symmetric(horizontal: 16),
+                                itemCount: _filteredMentors.length,
+                                separatorBuilder: (_, __) => const SizedBox(height: 8),
+                                itemBuilder: (context, index) {
+                                  final mentor = _filteredMentors[index];
+                                  return _buildMentorCard(mentor, theme);
+                                },
+                              ),
+                            ),
+                    ),
+                  ],
+                ),
     );
   }
 
-  Widget _buildMentorCard(Map<String, String> mentor, ThemeData theme) {
-    final isActive = mentor['status'] == 'Active';
+  void _showLevelFilter(ThemeData theme) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        final levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
+        return ListView(
+          shrinkWrap: true,
+          children: [
+            ListTile(
+              title: const Text('All Levels'),
+              onTap: () {
+                setState(() => _levelFilter = null);
+                _applyFilters();
+                Navigator.pop(context);
+              },
+            ),
+            ...levels.map((level) => ListTile(
+                  title: Text(level),
+                  selected: _levelFilter == level,
+                  onTap: () {
+                    setState(() => _levelFilter = level);
+                    _applyFilters();
+                    Navigator.pop(context);
+                  },
+                )),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showStatusFilter(ThemeData theme) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        final statuses = ['active', 'inactive'];
+        return ListView(
+          shrinkWrap: true,
+          children: [
+            ListTile(
+              title: const Text('All Statuses'),
+              onTap: () {
+                setState(() => _statusFilter = null);
+                _applyFilters();
+                Navigator.pop(context);
+              },
+            ),
+            ...statuses.map((status) => ListTile(
+                  title: Text(status.toUpperCase()),
+                  selected: _statusFilter == status,
+                  onTap: () {
+                    setState(() => _statusFilter = status);
+                    _applyFilters();
+                    Navigator.pop(context);
+                  },
+                )),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildMentorCard(Mentor mentor, ThemeData theme) {
+    final isActive = mentor.status == 'active';
 
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: theme.cardColor,
         borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         children: [
@@ -114,7 +256,7 @@ class _AdminMentorManagementScreenState extends State<AdminMentorManagementScree
             radius: 24,
             backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
             child: Text(
-              mentor['name']!.substring(0, 1),
+              mentor.name.substring(0, 1).toUpperCase(),
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -128,11 +270,11 @@ class _AdminMentorManagementScreenState extends State<AdminMentorManagementScree
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  mentor['name']!,
+                  mentor.name,
                   style: theme.textTheme.titleMedium,
                 ),
                 Text(
-                  'English Level: ${mentor['level']}',
+                  'English Level: ${mentor.english_level}',
                   style: theme.textTheme.bodySmall,
                 ),
                 const SizedBox(height: 4),
@@ -145,7 +287,7 @@ class _AdminMentorManagementScreenState extends State<AdminMentorManagementScree
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
-                    mentor['status']!,
+                    mentor.status.toUpperCase(),
                     style: TextStyle(
                       fontSize: 12,
                       color: isActive ? const Color(0xFF10B981) : Colors.grey,
@@ -159,7 +301,11 @@ class _AdminMentorManagementScreenState extends State<AdminMentorManagementScree
           IconButton(
             icon: const Icon(Icons.chevron_right),
             onPressed: () {
-              // TODO: Navigate to mentor detail
+              Navigator.pushNamed(
+                context,
+                '/mentor_detail',
+                arguments: mentor.id,
+              );
             },
           ),
         ],

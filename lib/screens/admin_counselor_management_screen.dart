@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../services/api_service.dart';
+import '../models/counselor.dart';
 
 class AdminCounselorManagementScreen extends StatefulWidget {
   const AdminCounselorManagementScreen({super.key});
@@ -8,7 +10,20 @@ class AdminCounselorManagementScreen extends StatefulWidget {
 }
 
 class _AdminCounselorManagementScreenState extends State<AdminCounselorManagementScreen> {
+  final ApiService _apiService = ApiService();
   final TextEditingController _searchController = TextEditingController();
+
+  List<Counselor> _allCounselors = [];
+  List<Counselor> _filteredCounselors = [];
+  bool _isLoading = true;
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCounselors();
+    _searchController.addListener(_applyFilters);
+  }
 
   @override
   void dispose() {
@@ -16,15 +31,39 @@ class _AdminCounselorManagementScreenState extends State<AdminCounselorManagemen
     super.dispose();
   }
 
+  Future<void> _loadCounselors() async {
+    try {
+      setState(() {
+        _isLoading = true;
+        _error = null;
+      });
+      final counselors = await _apiService.getAdminCounselors();
+      setState(() {
+        _allCounselors = counselors;
+        _applyFilters();
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _error = e.toString();
+        _isLoading = false;
+      });
+    }
+  }
+
+  void _applyFilters() {
+    setState(() {
+      _filteredCounselors = _allCounselors.where((counselor) {
+        final matchesSearch = _searchController.text.isEmpty ||
+            counselor.name.toLowerCase().contains(_searchController.text.toLowerCase());
+        return matchesSearch;
+      }).toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
-    final counselors = [
-      {'name': 'Dr. Emily Anderson', 'students': '45', 'status': 'Active'},
-      {'name': 'Mr. James Wilson', 'students': '38', 'status': 'Active'},
-      {'name': 'Ms. Patricia Brown', 'students': '42', 'status': 'Active'},
-    ];
 
     return Scaffold(
       appBar: AppBar(
@@ -34,45 +73,86 @@ class _AdminCounselorManagementScreenState extends State<AdminCounselorManagemen
         ),
         title: const Text('Guidance Counselors'),
         centerTitle: true,
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: 'Search counselors',
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-            ),
-          ),
-
-          Expanded(
-            child: ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              itemCount: counselors.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 8),
-              itemBuilder: (context, index) {
-                final counselor = counselors[index];
-                return _buildCounselorCard(counselor, theme);
-              },
-            ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: _loadCounselors,
           ),
         ],
       ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _error != null
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('Error loading counselors', style: theme.textTheme.titleMedium),
+                      const SizedBox(height: 8),
+                      Text(_error!, style: theme.textTheme.bodySmall),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: _loadCounselors,
+                        child: const Text('Retry'),
+                      ),
+                    ],
+                  ),
+                )
+              : Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: TextField(
+                        controller: _searchController,
+                        decoration: InputDecoration(
+                          hintText: 'Search counselors',
+                          prefixIcon: const Icon(Icons.search),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    Expanded(
+                      child: _filteredCounselors.isEmpty
+                          ? Center(
+                              child: Text(
+                                'No counselors found',
+                                style: theme.textTheme.bodyMedium?.copyWith(color: Colors.grey),
+                              ),
+                            )
+                          : RefreshIndicator(
+                              onRefresh: _loadCounselors,
+                              child: ListView.separated(
+                                padding: const EdgeInsets.symmetric(horizontal: 16),
+                                itemCount: _filteredCounselors.length,
+                                separatorBuilder: (_, __) => const SizedBox(height: 8),
+                                itemBuilder: (context, index) {
+                                  final counselor = _filteredCounselors[index];
+                                  return _buildCounselorCard(counselor, theme);
+                                },
+                              ),
+                            ),
+                    ),
+                  ],
+                ),
     );
   }
 
-  Widget _buildCounselorCard(Map<String, String> counselor, ThemeData theme) {
+  Widget _buildCounselorCard(Counselor counselor, ThemeData theme) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: theme.cardColor,
         borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         children: [
@@ -80,7 +160,7 @@ class _AdminCounselorManagementScreenState extends State<AdminCounselorManagemen
             radius: 24,
             backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
             child: Text(
-              counselor['name']!.substring(0, 1),
+              counselor.name.substring(0, 1).toUpperCase(),
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -94,13 +174,14 @@ class _AdminCounselorManagementScreenState extends State<AdminCounselorManagemen
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  counselor['name']!,
+                  counselor.name,
                   style: theme.textTheme.titleMedium,
                 ),
-                Text(
-                  '${counselor['students']} students',
-                  style: theme.textTheme.bodySmall,
-                ),
+                if (counselor.specialization != null)
+                  Text(
+                    counselor.specialization!,
+                    style: theme.textTheme.bodySmall,
+                  ),
               ],
             ),
           ),
