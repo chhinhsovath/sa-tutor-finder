@@ -7,6 +7,15 @@ class Mentor {
   final String timezone;
   final String status;
   final String? userType; // User role: student, mentor, counselor, admin
+
+  // Location fields for in-person tutoring
+  final String? address;
+  final double? latitude;
+  final double? longitude;
+  final bool offersInPerson;
+  final int? maxTravelDistanceKm;
+  final double? distanceKm; // Distance from search reference point (populated in search results)
+
   final DateTime created_at;
   final DateTime updated_at;
   final List<AvailabilitySlot>? availability_slots;
@@ -20,6 +29,12 @@ class Mentor {
     required this.timezone,
     required this.status,
     this.userType,
+    this.address,
+    this.latitude,
+    this.longitude,
+    this.offersInPerson = false,
+    this.maxTravelDistanceKm,
+    this.distanceKm,
     required this.created_at,
     required this.updated_at,
     this.availability_slots,
@@ -27,16 +42,32 @@ class Mentor {
 
   factory Mentor.fromJson(Map<String, dynamic> json) {
     return Mentor(
-      id: json['id'],
-      name: json['name'],
-      email: json['email'],
+      id: json['id'] ?? '',
+      name: json['name'] ?? '',
+      email: json['email'] ?? '',
       english_level: json['english_level'] ?? 'A1', // Default for non-mentors
       contact: json['contact'],
-      timezone: json['timezone'],
-      status: json['status'],
+      timezone: json['timezone'] ?? 'Asia/Phnom_Penh',
+      status: json['status'] ?? 'active',
       userType: json['user_type'], // Parse user_type from API
-      created_at: DateTime.parse(json['created_at']),
-      updated_at: DateTime.parse(json['updated_at']),
+      address: json['address'],
+      latitude: json['latitude'] != null
+          ? double.tryParse(json['latitude'].toString())
+          : null,
+      longitude: json['longitude'] != null
+          ? double.tryParse(json['longitude'].toString())
+          : null,
+      offersInPerson: json['offers_in_person'] ?? false,
+      maxTravelDistanceKm: json['max_travel_distance_km'],
+      distanceKm: json['distance_km'] != null
+          ? double.tryParse(json['distance_km'].toString())
+          : null,
+      created_at: json['created_at'] != null
+          ? DateTime.parse(json['created_at'])
+          : DateTime.now(),
+      updated_at: json['updated_at'] != null
+          ? DateTime.parse(json['updated_at'])
+          : DateTime.now(),
       availability_slots: json['availability_slots'] != null
           ? (json['availability_slots'] as List)
               .map((slot) => AvailabilitySlot.fromJson(slot))
