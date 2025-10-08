@@ -18,10 +18,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _contactController = TextEditingController();
-  final _institutionController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _learningGoalsController = TextEditingController();
+  final _specializationController = TextEditingController();
 
   UserRole _selectedRole = UserRole.student;
-  String _selectedEnglishLevel = 'B1';
+  String _selectedEnglishLevel = 'A1';
   String _selectedContactMethod = 'email';
 
   final List<String> _englishLevels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
@@ -33,7 +35,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     _emailController.dispose();
     _passwordController.dispose();
     _contactController.dispose();
-    _institutionController.dispose();
+    _phoneController.dispose();
+    _learningGoalsController.dispose();
+    _specializationController.dispose();
     super.dispose();
   }
 
@@ -42,25 +46,49 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
-    // Only mentors can sign up in this MVP
-    if (_selectedRole != UserRole.mentor) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Only mentor registration is available in this version'),
-          backgroundColor: Colors.orange,
-        ),
-      );
-      return;
+    // Map UserRole enum to user_type string
+    String userType;
+    switch (_selectedRole) {
+      case UserRole.student:
+        userType = 'student';
+        break;
+      case UserRole.mentor:
+        userType = 'mentor';
+        break;
+      case UserRole.guidance:
+        userType = 'counselor';
+        break;
+    }
+
+    // Prepare role-specific parameters
+    String? englishLevel;
+    String? contact;
+    String? phoneNumber;
+    String? learningGoals;
+    String? specialization;
+
+    if (_selectedRole == UserRole.student) {
+      englishLevel = _selectedEnglishLevel;
+      phoneNumber = _phoneController.text.trim().isEmpty ? null : _phoneController.text.trim();
+      learningGoals = _learningGoalsController.text.trim().isEmpty ? null : _learningGoalsController.text.trim();
+    } else if (_selectedRole == UserRole.mentor) {
+      englishLevel = _selectedEnglishLevel;
+      contact = _contactController.text.trim().isEmpty ? null : _contactController.text.trim();
+    } else if (_selectedRole == UserRole.guidance) {
+      phoneNumber = _phoneController.text.trim().isEmpty ? null : _phoneController.text.trim();
+      specialization = _specializationController.text.trim().isEmpty ? null : _specializationController.text.trim();
     }
 
     final success = await authProvider.signup(
       name: _nameController.text.trim(),
       email: _emailController.text.trim(),
       password: _passwordController.text,
-      english_level: _selectedEnglishLevel,
-      contact: _contactController.text.trim().isEmpty
-          ? null
-          : _contactController.text.trim(),
+      user_type: userType,
+      english_level: englishLevel,
+      contact: contact,
+      phone_number: phoneNumber,
+      learning_goals: learningGoals,
+      specialization: specialization,
     );
 
     if (success && mounted) {
@@ -173,6 +201,60 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       _buildTextField('Email', _emailController, theme, keyboardType: TextInputType.emailAddress),
       const SizedBox(height: 24),
       _buildTextField('Password', _passwordController, theme, isPassword: true),
+      const SizedBox(height: 24),
+
+      // English Level
+      Text('English Level', style: theme.textTheme.labelLarge),
+      const SizedBox(height: 8),
+      Container(
+        decoration: BoxDecoration(
+          color: theme.inputDecorationTheme.fillColor,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: DropdownButtonFormField<String>(
+          initialValue: _selectedEnglishLevel,
+          decoration: const InputDecoration(
+            border: InputBorder.none,
+            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          ),
+          items: _englishLevels.map((level) {
+            final labels = {
+              'A1': 'A1 - Beginner',
+              'A2': 'A2 - Elementary',
+              'B1': 'B1 - Intermediate',
+              'B2': 'B2 - Upper-Intermediate',
+              'C1': 'C1 - Advanced',
+              'C2': 'C2 - Proficiency',
+            };
+            return DropdownMenuItem(
+              value: level,
+              child: Text(labels[level] ?? level),
+            );
+          }).toList(),
+          onChanged: (value) {
+            setState(() {
+              _selectedEnglishLevel = value!;
+            });
+          },
+        ),
+      ),
+      const SizedBox(height: 24),
+
+      // Phone Number (optional)
+      _buildTextField('Phone Number (Optional)', _phoneController, theme,
+        keyboardType: TextInputType.phone, isRequired: false),
+      const SizedBox(height: 24),
+
+      // Learning Goals (optional)
+      Text('Learning Goals (Optional)', style: theme.textTheme.labelLarge),
+      const SizedBox(height: 8),
+      TextFormField(
+        controller: _learningGoalsController,
+        maxLines: 3,
+        decoration: const InputDecoration(
+          hintText: 'What are your English learning goals?',
+        ),
+      ),
     ];
   }
 
@@ -265,7 +347,22 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       const SizedBox(height: 24),
       _buildTextField('Password', _passwordController, theme, isPassword: true),
       const SizedBox(height: 24),
-      _buildTextField('Institution Name', _institutionController, theme),
+
+      // Phone Number (optional)
+      _buildTextField('Phone Number (Optional)', _phoneController, theme,
+        keyboardType: TextInputType.phone, isRequired: false),
+      const SizedBox(height: 24),
+
+      // Specialization (optional)
+      Text('Specialization (Optional)', style: theme.textTheme.labelLarge),
+      const SizedBox(height: 8),
+      TextFormField(
+        controller: _specializationController,
+        maxLines: 2,
+        decoration: const InputDecoration(
+          hintText: 'e.g., Career Counseling, Academic Guidance',
+        ),
+      ),
     ];
   }
 
@@ -275,6 +372,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     ThemeData theme, {
     bool isPassword = false,
     TextInputType? keyboardType,
+    bool isRequired = true,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -286,12 +384,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           obscureText: isPassword,
           keyboardType: keyboardType,
           decoration: InputDecoration(
-            hintText: 'Enter your ${label.toLowerCase()}',
+            hintText: 'Enter your ${label.toLowerCase().replaceAll(' (optional)', '')}',
           ),
           validator: (value) {
-            if (value?.isEmpty ?? true) return '$label is required';
-            if (label == 'Email' && !value!.contains('@')) return 'Invalid email';
-            if (label == 'Password' && value!.length < 6) {
+            if (isRequired && (value?.isEmpty ?? true)) return '$label is required';
+            if (label.contains('Email') && value != null && value.isNotEmpty && !value.contains('@')) {
+              return 'Invalid email';
+            }
+            if (label.contains('Password') && value != null && value.isNotEmpty && value.length < 6) {
               return 'Password must be at least 6 characters';
             }
             return null;

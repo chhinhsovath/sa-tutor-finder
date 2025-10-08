@@ -121,6 +121,7 @@ class _AuthScreenState extends State<AuthScreen>
         name: _nameController.text.trim(),
         email: _emailController.text.trim(),
         password: _passwordController.text,
+        user_type: 'mentor', // auth_screen.dart is mentor-only signup
         english_level: _selectedLevel,
         contact: _contactController.text.trim().isEmpty
             ? null

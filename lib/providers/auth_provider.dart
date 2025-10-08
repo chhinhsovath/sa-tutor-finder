@@ -29,8 +29,12 @@ class AuthProvider with ChangeNotifier {
     required String name,
     required String email,
     required String password,
-    required String english_level,
+    required String user_type, // 'mentor', 'student', 'counselor'
+    String? english_level,
     String? contact,
+    String? phone_number,
+    String? learning_goals,
+    String? specialization,
   }) async {
     _isLoading = true;
     _error = null;
@@ -41,11 +45,15 @@ class AuthProvider with ChangeNotifier {
         name: name,
         email: email,
         password: password,
+        user_type: user_type,
         english_level: english_level,
         contact: contact,
+        phone_number: phone_number,
+        learning_goals: learning_goals,
+        specialization: specialization,
       );
 
-      // API returns 'user' not 'mentor'
+      // API returns 'user' object with user_type field
       _currentMentor = Mentor.fromJson(response['user']);
       _isLoading = false;
       notifyListeners();

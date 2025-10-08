@@ -45,24 +45,36 @@ class ApiService {
     return Options();
   }
 
-  // Auth - Signup
+  // Auth - Signup (supports all user types)
   Future<Map<String, dynamic>> signup({
     required String name,
     required String email,
     required String password,
-    required String english_level,
+    required String user_type, // 'mentor', 'student', 'counselor'
+    String? english_level,
     String? contact,
+    String? phone_number,
+    String? learning_goals,
+    String? specialization,
   }) async {
     try {
+      final data = <String, dynamic>{
+        'name': name,
+        'email': email,
+        'password': password,
+        'user_type': user_type,
+      };
+
+      // Add role-specific fields
+      if (english_level != null) data['english_level'] = english_level;
+      if (contact != null) data['contact'] = contact;
+      if (phone_number != null) data['phone_number'] = phone_number;
+      if (learning_goals != null) data['learning_goals'] = learning_goals;
+      if (specialization != null) data['specialization'] = specialization;
+
       final response = await _dio.post(
         ApiConfig.signup,
-        data: {
-          'name': name,
-          'email': email,
-          'password': password,
-          'english_level': english_level,
-          'contact': contact,
-        },
+        data: data,
       );
 
       // Save token
